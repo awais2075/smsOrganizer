@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+
+    android:layout_height="wrap_content"
+
+    android:paddingTop="8dp">
+
+    <ImageView
+        android:id="@+id/image_message_profile"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="8dp"
+        android:background="@mipmap/icon_account"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_receiveSmsBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_rectangle_gray"
+        android:maxWidth="230dp"
+        android:minWidth="80dp"
+        android:paddingBottom="6dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="6dp"
+        android:text=""
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toRightOf="@+id/image_message_profile"
+        app:layout_constraintTop_toTopOf="@+id/image_message_profile" />
+
+    <TextView
+        android:id="@+id/text_receiveSmsDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="11:40"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="@+id/text_receiveSmsBody"
+        app:layout_constraintTop_toBottomOf="@+id/text_receiveSmsBody" />
+
+</android.support.constraint.ConstraintLayout>
+<!--
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="5dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
+
+    <TextView
+        android:id="@+id/text_receiveSmsBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="testint testint testint testint testint testint "
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:textIsSelectable="true"
+        android:background="@drawable/bubble_receiver"
+        android:textSize="14dp" />
+
+    <TextView
+        android:id="@+id/text_receiveSmsDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12 OCT"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/text_receiveSmsBody"
+        android:layout_marginBottom="25dp"
+        android:layout_marginLeft="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="6dp"
+        android:textSize="10dp" />
+</RelativeLayout>-->

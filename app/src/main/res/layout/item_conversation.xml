@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:id="@+id/view_conversation"
+    android:clickable="true"
+    android:paddingBottom="@dimen/row_padding"
+    android:paddingLeft="@dimen/activity_margin"
+    android:paddingRight="@dimen/activity_margin"
+    android:paddingTop="@dimen/row_padding">
+
+
+    
+
+    <TextView
+        android:id="@+id/text_smsAddress"
+        android:text="Muhammad Awais Rashid "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/contact_name"
+        android:textSize="@dimen/contact_name" />
+
+    <TextView
+        android:id="@+id/text_smsBody"
+        android:text="hello how are your, what are you doing, just checking, so don't freak out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_below="@id/text_smsAddress"
+        android:textColor="@color/contact_number"
+        android:textSize="@dimen/contact_number" />
+
+    <TextView
+        android:id="@+id/text_smsDate"
+        android:text="10 OCT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        />
+
+</RelativeLayout>

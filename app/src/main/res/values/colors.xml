@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--&lt;!&ndash;<color name="colorPrimary">#34bf49</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="button_googleSignIn">#dd4b39</color>-->
+    <!--<color name="colorPrimary">#6BB345</color>
+    <color name="colorPrimaryDark">#0097a7</color>
+    <color name="colorAccent">#999999</color>-->
+    <color name="colorTransparent">#00000000</color>
+
+    <!--
+        <color name="bg_login">#26ae90</color>
+        <color name="bg_register">#2e3237</color>
+        <color name="bg_main">#428bca</color>
+        <color name="input_login">#222222</color>
+        <color name="input_login_hint">#999999</color>
+        <color name="input_register">#888888</color>
+        <color name="input_register_bg">#3b4148</color>
+        <color name="input_register_hint">#5e6266</color>
+        <color name="btn_login">#26ae90</color>
+        <color name="btn_login_bg">#eceef1</color>
+        <color name="lbl_name">#333333</color>
+        <color name="btn_logut_bg">#ff6861</color>-->
+
+
+    <color name="white">#ffffff</color>
+
+    <!--activity_login.xml-->
+    <color name="button_googleSignIn">#dd4b39</color>
+    <color name="button_facebookSignIn">#3b5998</color>
+    <color name="button_signIn">#6BB345</color>
+    <color name="button_forgotPassword">#6BB345</color>
+    <color name="button_signUp">#6BB345</color>
+
+    <!--activity_register.xml-->
+    <color name="button_register">#6BB345</color>
+    <color name="button_alreadyHaveAccount">#6BB345</color>
+
+    <!--#111-->
+    <color name="colorPrimary">#6BB345</color>
+    <color name="colorPrimaryDark">#222</color>
+    <!--#ea3732-->
+    <color name="colorAccent">#FFFFFF</color>
+    <color name="contact_name">#333333</color>
+    <color name="contact_number">#8c8c8c</color>
+
+
+    <color name="colorPrimaryText">#212121</color>
+    <color name="grey">#DCDCDC</color>
+
+
+
+
+
+</resources>
