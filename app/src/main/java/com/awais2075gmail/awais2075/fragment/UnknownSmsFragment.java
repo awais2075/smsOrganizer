@@ -186,4 +186,14 @@ public class UnknownSmsFragment extends BaseFragment implements ItemClickListene
         Toast.makeText(getContext(), smsType+"", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(getActivity(), MessageActivity.class).putExtra(Constants.threadId, "thread_id='" + smsThreadId + "'".toString()));
     }
+
+    @Override
+    public void onClickListener(String id, int position) {
+
+    }
+
+    @Override
+    public void onLongClickListener(String id, int position) {
+
+    }
 }

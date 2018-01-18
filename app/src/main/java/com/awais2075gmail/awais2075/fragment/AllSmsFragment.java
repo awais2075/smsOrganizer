@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.awais2075gmail.awais2075.MApplication;
 import com.awais2075gmail.awais2075._interface.ItemClickListener;
 import com.awais2075gmail.awais2075.R;
+import com.awais2075gmail.awais2075.activity.GroupActivity;
 import com.awais2075gmail.awais2075.activity.MessageActivity;
 import com.awais2075gmail.awais2075.activity.PhoneActivity;
 import com.awais2075gmail.awais2075.activity.TestActivity;
@@ -72,7 +73,7 @@ public class AllSmsFragment extends BaseFragment implements ItemClickListener {
         view.findViewById(R.id.floatingActionButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), PhoneActivity.class));
+                startActivity(new Intent(getContext(), GroupActivity.class));
                 //Toast.makeText(getContext(), Utils.phoneContactsList.get(10).getContactName()+"", Toast.LENGTH_SHORT).show();
             }
         });
@@ -204,5 +205,15 @@ public class AllSmsFragment extends BaseFragment implements ItemClickListener {
         //startActivity(new Intent(getActivity(), MessageActivity.class).putExtra(Constants.threadId, "thread_id='" + smsThreadId + "'".toString()));
 
         //startActivity(new Intent(getActivity(), TestActivity.class));
+    }
+
+    @Override
+    public void onClickListener(String id, int position) {
+
+    }
+
+    @Override
+    public void onLongClickListener(String id, int position) {
+
     }
 }

@@ -5,5 +5,11 @@ package com.awais2075gmail.awais2075._interface;
  */
 
 public interface ItemClickListener {
-    void itemClicked (long smsId, long smsThreadId, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType);
+    public void itemClicked(long smsId, long smsThreadId, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType);
+
+    void onClickListener(String id, int position);
+
+    void onLongClickListener(String id, int position);
+
+
 }

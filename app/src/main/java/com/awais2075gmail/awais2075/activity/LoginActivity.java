@@ -64,6 +64,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 gmailSignIn();
                 break;
             case R.id.button_facebookSignIn:
+                startActivity(new Intent(this, GroupActivity.class));
                 break;
             case R.id.button_emailSignIn:
                 signIn();
