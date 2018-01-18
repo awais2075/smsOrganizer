@@ -33,7 +33,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.GroupActivity"/>
         <activity
             android:name=".activity.RegisterActivity"
             android:noHistory="true" />
