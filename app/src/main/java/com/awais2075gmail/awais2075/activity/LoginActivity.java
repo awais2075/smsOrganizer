@@ -92,6 +92,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         super.onStart();
         isGoogleSignedIn();
         isEmailSignedIn();
+        //
     }
 
 
