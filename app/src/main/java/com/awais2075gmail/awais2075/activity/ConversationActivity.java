@@ -38,6 +38,7 @@ import com.awais2075gmail.awais2075.fragment.AllSmsFragment;
 import com.awais2075gmail.awais2075.fragment.GroupSmsFragment;
 import com.awais2075gmail.awais2075.fragment.UnknownSmsFragment;
 import com.awais2075gmail.awais2075.util.Constants;
+import com.awais2075gmail.awais2075.util.Utils;
 import com.google.android.gms.common.ConnectionResult;
 
 import java.util.ArrayList;
@@ -54,14 +55,15 @@ public class ConversationActivity extends BaseActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_conversation);
-        Constants.showProgressDialog(this);
         checkPermissions();
-        /*if (checkDefaultSettings()) {
+       /* if (checkDefaultSettings()) {
             checkPermissions();
         }*/
         init();
         emailInit();
         gmailInit();
+
+        //Toast.makeText(this, Utils.userId+" is userId in Conversation Activity", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -228,11 +230,12 @@ public class ConversationActivity extends BaseActivity{
         moveTaskToBack(true);
     }
 
-    @Override
+    /*@Override
     protected void onStart() {
         super.onStart();
-        //Constants.showProgressDialog(this);
-    }
+        isGoogleSignedIn();
+        isEmailSignedIn();
+    }*/
 
     @Override
     protected void onResume() {
@@ -257,4 +260,5 @@ public class ConversationActivity extends BaseActivity{
 
         this.registerReceiver(broadcastReceiver, intentFilter);
     }
+
 }

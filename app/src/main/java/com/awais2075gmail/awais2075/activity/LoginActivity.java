@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075.util.Constants;
+import com.awais2075gmail.awais2075.util.Utils;
 import com.google.android.gms.common.ConnectionResult;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         init();
         emailInit();
         gmailInit();
+        Toast.makeText(this, Utils.userId+" is userId in Login Activity", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -77,26 +79,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
     }
 
-    @Override
-    protected void emailInit() {
-        super.emailInit();
-    }
-
-    @Override
-    protected void emailSignIn(String userEmail, String userPassword) {
-        super.emailSignIn(userEmail, userPassword);
-    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        isGoogleSignedIn();
         isEmailSignedIn();
-        //
+        isGoogleSignedIn();
     }
-
-
-
 
     private void signIn() {
         String userEmail = edit_userEmail.getText().toString().trim();

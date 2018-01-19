@@ -6,10 +6,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
 
+import com.awais2075gmail.awais2075.firebase.Group;
 import com.awais2075gmail.awais2075.model.Contact;
 import com.awais2075gmail.awais2075.model.SMS;
 import com.awais2075gmail.awais2075.receiver.DeliverReceiver;
@@ -23,6 +26,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+
+import static android.content.Context.MODE_APPEND;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Muhammad Awais Rashi on 30-Nov-17.
@@ -125,4 +131,42 @@ public class Utils {
             return number;
         }
     }
+/*
+    public static void setDefaults(Context context, String userIdKey, String userIdValue, String loginIdKey, String loginIdValue) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(userIdKey, userIdValue);
+        editor.putString(loginIdKey, loginIdValue);
+        editor.commit();
+    }*/
+
+
+    /*public static void setDefaults(Context context, String userIdKey, String userIdValue) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(userIdKey, userIdValue);
+//        editor.putString(loginIdKey, loginIdValue);
+        editor.apply();
+    }
+
+    public static String getUserId(String userIdKey, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(userIdKey, null);
+
+    }
+
+
+    public static String getLoginId(String loginIdKey, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(loginIdKey, null);
+    }
+
+    public static void logout(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+        //.startActivity(new Intent(mCtx, LoginActivity.class));
+    }*/
 }
