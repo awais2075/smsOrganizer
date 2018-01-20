@@ -18,6 +18,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
@@ -45,12 +46,14 @@ import java.util.Set;
 public class MessageActivity extends BaseActivity implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private RecyclerView recyclerView;
+    private Toolbar toolbar;
     private MessageAdapter messageAdapter;
     private List<SMS> messageList = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager;
     private String cursorFilter;
-    private String messageId;
-    private String messageAddress;
+    private String smsId;
+    private String smsNumber;
+    private String smsAddress;
     private EditText edit_textMessage;
     private Button button_sendMessage;
     private static final int SMS_DRAFT = 2;
@@ -105,8 +108,22 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void init() {
-        messageId = getIntent().getStringExtra(Constants.threadId).toString();
-        messageAddress = getIntent().getStringExtra("messageAddress");
+        smsId = getIntent().getStringExtra(Constants.threadId).toString();
+        smsAddress = getIntent().getStringExtra("smsAddress");
+        smsNumber = getIntent().getStringExtra("smsNumber");
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(smsAddress);
+        getSupportActionBar().setSubtitle(smsNumber);
         recyclerView =  findViewById(R.id.recycler_view);
         edit_textMessage = findViewById(R.id.edit_textMessage);
         button_sendMessage = findViewById(R.id.button_sendMessage);
@@ -140,13 +157,13 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void sendMessage() {
-        send("03419022273",edit_textMessage.getText().toString());
+        send(smsNumber,edit_textMessage.getText().toString());
     }
 
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String selection = messageId;
+        String selection = smsId;
         String[] selectedArgs = null;
 
         if (cursorFilter != null) {
@@ -191,12 +208,12 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
 
                     String smsBody = cursor.getString(cursor.getColumnIndexOrThrow("body")).trim();
                     String smsReadState = cursor.getString(cursor.getColumnIndexOrThrow("read"));
-                    String smsDate = Constants.getDate(cursor.getLong(cursor.getColumnIndexOrThrow("date")));
+                    String smsDate = Constants.getDate(cursor.getLong(cursor.getColumnIndexOrThrow("date")), true);
                     String smsType = Utils.getSmsType(cursor.getString(cursor.getColumnIndexOrThrow("type")));
 
 
 
-                    sms = new SMS(smsId, smsThreadId, smsAddress, smsBody, smsReadState, smsDate, smsType);
+                    sms = new SMS(smsId, smsThreadId, smsNumber, smsAddress, smsBody, smsReadState, smsDate, smsType);
 
 
 
@@ -270,7 +287,7 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
 
         try {
             SmsManager sms = SmsManager.getDefault();
-            sms.sendTextMessage("03419022273", null, smsBody, sentPI, deliveredPI);
+            sms.sendTextMessage(smsAddress, null, smsBody, sentPI, deliveredPI);
         }catch (Exception e){
             Toast.makeText(context,("Sms Not sent"),Toast.LENGTH_SHORT).show();
         }
@@ -322,6 +339,7 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
             }
             smsmgr.sendMultipartTextMessage(recipient, null, messages, sentIntents, null);
             Log.i(TAG, "message sent");
+
         } catch (Exception e) {
             Log.e(TAG, "unexpected error", e);
             for (PendingIntent pi : sentIntents) {
@@ -334,6 +352,29 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
                 }
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        BroadcastReceiver mReceiver;
+        IntentFilter intentFilter = new IntentFilter(
+                "android.intent.action.MAIN");
+
+        mReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                boolean new_sms = intent.getBooleanExtra("new_sms", false);
+
+                if (new_sms)
+                    getSupportLoaderManager().restartLoader(Constants.ALL_SMS_LOADER, null, MessageActivity.this);
+
+            }
+        };
+
+        this.registerReceiver(mReceiver, intentFilter);
     }
 
 }

@@ -31,6 +31,11 @@ public class Contact{
         this.isSelected = isSelected;
     }
 
+    public Contact(String contactName, String contactNumber) {
+        this.contactName = contactName;
+        this.contactNumber = contactNumber;
+    }
+
     public String getContactId() {
         return contactId;
     }

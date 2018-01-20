@@ -1,6 +1,10 @@
 package com.awais2075gmail.awais2075.fragment;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,7 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.awais2075gmail.awais2075.activity.BaseActivity;
 import com.awais2075gmail.awais2075.activity.ConversationActivity;
+import com.awais2075gmail.awais2075.activity.MessageActivity;
 import com.awais2075gmail.awais2075.adapter.ConversationAdapter;
 import com.awais2075gmail.awais2075.model.SMS;
 import com.awais2075gmail.awais2075.util.Constants;
@@ -57,7 +63,7 @@ public abstract class BaseFragment extends Fragment implements LoaderManager.Loa
             selection = Constants.SMS_SELECTION_SEARCH;
             selectedArgs = new String[]{"%", cursorFilter, "%", "%" + cursorFilter + "%"};
         }
-        Toast.makeText(getContext(), "Cursor Loader", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "Cursor Loader", Toast.LENGTH_SHORT).show();
         return new CursorLoader(getContext(), Constants.GENERAL_SMS_URI, null, selection, selectedArgs, Constants.SORT_DESC);
     }
 
@@ -89,5 +95,51 @@ public abstract class BaseFragment extends Fragment implements LoaderManager.Loa
     protected List<SMS> getUnknownSmsList() {
         return unknownSmsList;
     }
+
+    /*@Override
+    public void onResume() {
+        super.onResume();
+
+        IntentFilter intentFilter = new IntentFilter(
+                "android.intent.action.MAIN");
+
+        BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                boolean new_sms = intent.getBooleanExtra("new_sms", false);
+
+                if (new_sms)
+                    getLoaderManager().restartLoader(Constants.ALL_SMS_LOADER, null, BaseFragment.this);
+
+            }
+        };
+
+        getContext().registerReceiver(mReceiver, intentFilter);
+    }*/
+    @Override
+    public void onResume() {
+        super.onResume();
+        BroadcastReceiver mReceiver;
+        IntentFilter intentFilter = new IntentFilter(
+                "android.intent.action.MAIN");
+
+        mReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                boolean new_sms = intent.getBooleanExtra("new_sms", false);
+
+                if (new_sms)
+                    getLoaderManager().restartLoader(Constants.ALL_SMS_LOADER, null, BaseFragment.this);
+
+            }
+        };
+
+        getContext().registerReceiver(mReceiver, intentFilter);
+    }
+
 
 }

@@ -34,7 +34,7 @@ public class MApplication extends Application {
             String name = (cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
             String number = Utils.isValidNumer(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)), Utils.getCountry(this));
             if (!hm.containsKey(number)) {
-                contact = new Contact(name, number, false);
+                contact = new Contact(name, number);
                 phoneList.add(contact);
                 hm.put(number, name);
             }

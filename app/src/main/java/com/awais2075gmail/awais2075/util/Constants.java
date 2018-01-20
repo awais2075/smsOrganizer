@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.text.format.DateUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,6 +19,7 @@ import java.util.Date;
 
 public class Constants {
     public static final int RC_SIGN_IN = 007;
+    public static final int CONVERSATION_LOADER = 321;
     public static boolean emailLoginCheck = false;
     public static boolean gmailLoginCheck = false;
 
@@ -37,14 +39,35 @@ public class Constants {
 
     public static String id;
 
-    public static String getDate(long milliSeconds) {
-        String dateFormat = "dd/MM/yyyy";
+    public static String getDate(long milliSeconds, boolean check) {
+        SimpleDateFormat formatter;
+        Calendar calendar;
+        String datePlusTime = "d MMM hh:mm a";
+        String onlyTime = "hh:mm a";
+        String onlyDate = "d MMM";
 
-        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+        if (check) {
+            formatter = new SimpleDateFormat(datePlusTime);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
+            calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(milliSeconds);
+            return formatter.format(calendar.getTime());
+        }
+        else {
+            if (DateUtils.isToday(milliSeconds)) {
+                formatter = new SimpleDateFormat(onlyTime);
+
+                calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(milliSeconds);
+                return formatter.format(calendar.getTime());
+            } else {
+                formatter = new SimpleDateFormat(onlyDate);
+
+                calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(milliSeconds);
+                return formatter.format(calendar.getTime());
+            }
+        }
     }
 
     public static String getName(String phoneNumber, Context context) {
@@ -78,9 +101,5 @@ public class Constants {
             mProgressDialog.hide();
         }
     }
-
-
-
-
 
 }

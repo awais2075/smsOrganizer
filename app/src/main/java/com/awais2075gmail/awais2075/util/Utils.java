@@ -42,7 +42,7 @@ public class Utils {
     public static boolean check;
     public static DatabaseReference contactDatabaseReference;
     public static List<SMS> unknownSmsList = new ArrayList<>();
-    public static List<Contact> phoneContactsList;
+    public static List<Contact> phoneContactsList = new ArrayList<>();
 
     public static String getCountry(Context context) {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(context.TELEPHONY_SERVICE);

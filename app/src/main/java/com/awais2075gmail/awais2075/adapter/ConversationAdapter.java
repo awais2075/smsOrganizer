@@ -90,13 +90,14 @@ public class ConversationAdapter extends RecyclerView.Adapter {
                 notifyItemChanged(getAdapterPosition());
                 long smsId = conversationList.get(getAdapterPosition()).getSmsId();
                 long smsThreadId = conversationList.get(getAdapterPosition()).getSmsThreadId();
+                String smsNumber = conversationList.get(getAdapterPosition()).getSmsNumber();
                 String smsAddress = conversationList.get(getAdapterPosition()).getSmsAddress();
                 String smsBody = conversationList.get(getAdapterPosition()).getSmsBody();
                 String smsDate = conversationList.get(getAdapterPosition()).getSmsDate();
                 String smsReadState = conversationList.get(getAdapterPosition()).getSmsReadState();
                 String smsType = conversationList.get(getAdapterPosition()).getSmsType();
 
-                itemClickListener.itemClicked(smsId, smsThreadId, smsAddress, smsBody, smsReadState, smsDate, smsType);
+                itemClickListener.itemClicked(smsId, smsThreadId, smsNumber, smsAddress, smsBody, smsReadState, smsDate, smsType);
             }
         }
     }

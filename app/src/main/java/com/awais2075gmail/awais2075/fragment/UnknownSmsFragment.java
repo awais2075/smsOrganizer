@@ -181,10 +181,16 @@ public class UnknownSmsFragment extends BaseFragment implements ItemClickListene
         recyclerview.setAdapter(conversationAdapter);
     }
 
+
+
     @Override
-    public void itemClicked(long smsId, long smsThreadId, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType) {
-        Toast.makeText(getContext(), smsType+"", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(getActivity(), MessageActivity.class).putExtra(Constants.threadId, "thread_id='" + smsThreadId + "'".toString()));
+    public void itemClicked(long smsId, long smsThreadId, String smsNumber, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType) {
+        //Toast.makeText(getContext(), smsType + "", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getContext(), MessageActivity.class);
+        intent.putExtra("smsNumber", smsNumber);
+        intent.putExtra("smsAddress", smsAddress);
+        intent.putExtra(Constants.threadId, "thread_id='" + smsThreadId + "'".toString());
+        startActivity(intent);
     }
 
     @Override

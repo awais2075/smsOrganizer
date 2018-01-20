@@ -55,10 +55,10 @@ public class ConversationActivity extends BaseActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_conversation);
-        checkPermissions();
-       /* if (checkDefaultSettings()) {
+        //   checkPermissions();
+        if (checkDefaultSettings()) {
             checkPermissions();
-        }*/
+        }
         init();
         emailInit();
         gmailInit();
@@ -86,7 +86,7 @@ public class ConversationActivity extends BaseActivity{
     private void setViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new AllSmsFragment(), "All");
-        adapter.addFragment(new GroupSmsFragment(), "Groups");
+       // adapter.addFragment(new GroupSmsFragment(), "Groups");
         adapter.addFragment(new UnknownSmsFragment(), "Unknown");
         viewPager.setAdapter(adapter);
 
@@ -254,7 +254,7 @@ public class ConversationActivity extends BaseActivity{
                     Toast.makeText(context, "New Sms", Toast.LENGTH_SHORT).show();
                     new MessageAdapter().notifyDataSetChanged();
                 }
-                    //getSupportLoaderManager().restartLoader(Constants.ALL_SMS_LOADER, null, ConversationActivity.this);
+                //getSupportLoaderManager().restartLoader(Constants.ALL_SMS_LOADER, null, ConversationActivity.this);
             }
         };
 

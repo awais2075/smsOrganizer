@@ -3,6 +3,7 @@ package com.awais2075gmail.awais2075.model;
 public class SMS {
     private long smsId;
     private long smsThreadId;
+    private String smsNumber;
     private String smsAddress;
     private String smsBody;
     private String smsReadState;
@@ -14,13 +15,14 @@ public class SMS {
     }
 
 
-    public SMS(long smsId, long smsThreadId, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType) {
+
+    public SMS(long smsId, long smsThreadId, String smsNumber, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType) {
         this.smsId = smsId;
         this.smsThreadId = smsThreadId;
+        this.smsNumber = smsNumber;
         this.smsAddress = smsAddress;
         this.smsBody = smsBody;
         this.smsReadState = smsReadState;
-
         this.smsDate = smsDate;
         this.smsType = smsType;
     }
@@ -39,6 +41,14 @@ public class SMS {
 
     public void setSmsThreadId(long smsThreadId) {
         this.smsThreadId = smsThreadId;
+    }
+
+    public String getSmsNumber() {
+        return smsNumber;
+    }
+
+    public void setSmsNumber(String smsNumber) {
+        this.smsNumber = smsNumber;
     }
 
     public String getSmsAddress() {

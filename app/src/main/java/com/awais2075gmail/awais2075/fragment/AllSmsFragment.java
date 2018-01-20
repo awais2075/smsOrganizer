@@ -1,7 +1,10 @@
 package com.awais2075gmail.awais2075.fragment;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +19,7 @@ import android.widget.Toast;
 import com.awais2075gmail.awais2075._interface.ItemClickListener;
 import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075.activity.MessageActivity;
+import com.awais2075gmail.awais2075.activity.PhoneActivity;
 import com.awais2075gmail.awais2075.adapter.ConversationAdapter;
 import com.awais2075gmail.awais2075.firebase.GroupActivity;
 import com.awais2075gmail.awais2075.model.SMS;
@@ -28,7 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AllSmsFragment extends BaseFragment implements ItemClickListener {
+public class AllSmsFragment extends BaseFragment implements ItemClickListener, View.OnClickListener {
 
     private int smsCount;
     private List<SMS> smsList;
@@ -66,13 +70,7 @@ public class AllSmsFragment extends BaseFragment implements ItemClickListener {
         getLoaderManager().initLoader(Constants.ALL_SMS_LOADER, null, this);
 
 
-        view.findViewById(R.id.floatingActionButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getContext(), GroupActivity.class));
-                //Toast.makeText(getContext(), Utils.phoneContactsList.get(10).getContactName()+"", Toast.LENGTH_SHORT).show();
-            }
-        });
+        view.findViewById(R.id.floatingActionButton).setOnClickListener(this);
 
 
     }
@@ -124,16 +122,16 @@ public class AllSmsFragment extends BaseFragment implements ItemClickListener {
                     if (!hashSet.contains(smsThreadId)) {
                         long smsId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
                         //long smsThreadId = cursor.getLong(cursor.getColumnIndexOrThrow("thread_id"));
-                        String address = Utils.isValidNumer(cursor.getString(cursor.getColumnIndexOrThrow("address")), Utils.getCountry(getContext()));
-                        String smsAddress = Utils.getName(address);
-                        if (address != smsAddress) {
+                        String smsNumber = Utils.isValidNumer(cursor.getString(cursor.getColumnIndexOrThrow("address")), Utils.getCountry(getContext()));
+                        String smsAddress = Utils.getName(smsNumber);
+                        if (smsNumber != smsAddress) {
                             knownCheck = true;
-                        } else if (address == smsAddress) {
+                        } else if (smsNumber == smsAddress) {
                             unknownCheck = true;
                         }
                         String smsBody = cursor.getString(cursor.getColumnIndexOrThrow("body")).trim();
                         String smsReadState = cursor.getString(cursor.getColumnIndexOrThrow("read"));
-                        String smsDate = Constants.getDate(cursor.getLong(cursor.getColumnIndexOrThrow("date")));
+                        String smsDate = Constants.getDate(cursor.getLong(cursor.getColumnIndexOrThrow("date")), false);
                         String smsType;
 
                         hashSet.add(smsThreadId);
@@ -141,7 +139,7 @@ public class AllSmsFragment extends BaseFragment implements ItemClickListener {
                         smsType = Utils.getSmsType(cursor.getString(cursor.getColumnIndexOrThrow("type")));
 
 
-                        sms = new SMS(smsId, smsThreadId, smsAddress, smsBody, smsReadState, smsDate, smsType);
+                        sms = new SMS(smsId, smsThreadId, smsNumber, smsAddress, smsBody, smsReadState, smsDate, smsType);
 
 
                     } else {
@@ -190,11 +188,13 @@ public class AllSmsFragment extends BaseFragment implements ItemClickListener {
     }
 
 
+
     @Override
-    public void itemClicked(long smsId, long smsThreadId, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType) {
-        Toast.makeText(getContext(), smsType + "", Toast.LENGTH_SHORT).show();
+    public void itemClicked(long smsId, long smsThreadId, String smsNumber, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType) {
+        //Toast.makeText(getContext(), smsAddress + "", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getContext(), MessageActivity.class);
-        intent.putExtra("messageAddress", smsAddress);
+        intent.putExtra("smsNumber", smsNumber);
+        intent.putExtra("smsAddress", smsAddress);
         intent.putExtra(Constants.threadId, "thread_id='" + smsThreadId + "'".toString());
         startActivity(intent);
 
@@ -212,4 +212,14 @@ public class AllSmsFragment extends BaseFragment implements ItemClickListener {
     public void onLongClickListener(String id, int position) {
 
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.floatingActionButton:
+                startActivity(new Intent(getContext(), PhoneActivity.class));
+                break;
+        }
+    }
+
 }

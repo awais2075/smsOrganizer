@@ -12,9 +12,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
 
-import com.awais2075gmail.awais2075.MApplication;
+import com.awais2075gmail.awais2075.MyDividerItemDecoration;
 import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075.adapter.PhoneAdapter;
 import com.awais2075gmail.awais2075.model.Contact;
@@ -57,13 +56,13 @@ public class PhoneActivity extends AppCompatActivity implements View.OnClickList
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView_phone.setLayoutManager(mLayoutManager);
         recyclerView_phone.setItemAnimator(new DefaultItemAnimator());
+        recyclerView_phone.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
         recyclerView_phone.setAdapter(phoneAdapter);
     }
 
     private void getAllPhoneContacts(Cursor cursor) {
-        phoneList = Utils.phoneContactsList;
 
-        /*cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.Contacts.DISPLAY_NAME);
+        cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.Contacts.DISPLAY_NAME);
         Contact contact;
         HashSet<String> hs = new HashSet<>();
         while (cursor.moveToNext()) {
@@ -75,7 +74,7 @@ public class PhoneActivity extends AppCompatActivity implements View.OnClickList
                 hs.add(number);
             }
         }
-        cursor.close();*/
+        cursor.close();
 
         phoneAdapter.notifyDataSetChanged();
     }

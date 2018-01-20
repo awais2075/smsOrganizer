@@ -5,7 +5,7 @@ package com.awais2075gmail.awais2075._interface;
  */
 
 public interface ItemClickListener {
-    public void itemClicked(long smsId, long smsThreadId, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType);
+    public void itemClicked(long smsId, long smsThreadId, String smsNumber, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType);
 
     void onClickListener(String id, int position);
 
