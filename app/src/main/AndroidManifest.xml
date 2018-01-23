@@ -112,12 +112,6 @@
         <service android:name=".service.UpdateSMSService" />
 
         <activity android:name=".activity.TestActivity"/>
-        <activity
-            android:name=".firebase.GroupActivity"
-            android:label="@string/title_activity_group"
-            android:theme="@style/AppTheme">
-
-        </activity>
     </application>
 
 </manifest>

@@ -48,6 +48,8 @@
 
     <string name="action_settings">Settings</string>
     <string name="action_logout">Logout</string>
+    <string name="search_hint">Type name…</string>
+    <string name="action_search">Search</string>
 
     <!--activity_login.xml-->
     <string name="text_login...">Login to your account</string>
@@ -72,6 +74,8 @@
     <string name="title_activity_conversation">Conversations</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="title_activity_group">GroupActivity</string>
+
+
 
 
 </resources>

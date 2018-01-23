@@ -1,4 +1,4 @@
-package com.awais2075gmail.awais2075.firebase;
+package com.awais2075gmail.awais2075.model;
 
 /**
  * Created by Muhammad Awais Rashi on 18-Jan-18.

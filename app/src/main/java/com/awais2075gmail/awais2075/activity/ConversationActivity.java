@@ -54,8 +54,6 @@ public class ConversationActivity extends BaseActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_conversation);
-        //   checkPermissions();
         if (checkDefaultSettings()) {
             checkPermissions();
         }
@@ -86,7 +84,7 @@ public class ConversationActivity extends BaseActivity{
     private void setViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new AllSmsFragment(), "All");
-       // adapter.addFragment(new GroupSmsFragment(), "Groups");
+        adapter.addFragment(new GroupSmsFragment(), "Groups");
         adapter.addFragment(new UnknownSmsFragment(), "Unknown");
         viewPager.setAdapter(adapter);
 

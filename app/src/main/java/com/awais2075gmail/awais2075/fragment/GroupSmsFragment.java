@@ -2,6 +2,7 @@ package com.awais2075gmail.awais2075.fragment;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,13 +18,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.awais2075gmail.awais2075.R;
-import com.awais2075gmail.awais2075.firebase.Group;
-import com.awais2075gmail.awais2075.firebase.GroupActivity;
-import com.awais2075gmail.awais2075.firebase.GroupAdapter;
-import com.awais2075gmail.awais2075.firebase.GroupDB;
+import com.awais2075gmail.awais2075._interface.ItemClickListener;
+import com.awais2075gmail.awais2075.activity.PhoneActivity;
+import com.awais2075gmail.awais2075.model.Group;
+import com.awais2075gmail.awais2075.adapter.GroupAdapter;
+import com.awais2075gmail.awais2075.database.GroupDB;
 import com.awais2075gmail.awais2075.util.Utils;
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,12 +32,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.security.AccessController.getContext;
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GroupSmsFragment extends BaseFragment {
+public class GroupSmsFragment extends BaseFragment implements ItemClickListener<Group>{
 
     private Toolbar toolbar;
     private RecyclerView recyclerView;
@@ -61,7 +59,7 @@ public class GroupSmsFragment extends BaseFragment {
 
     @Override
     protected int getFragmentLayout() {
-        return R.layout.activity_group;
+        return R.layout.fragment_group_sms;
     }
 
     @Override
@@ -88,7 +86,7 @@ public class GroupSmsFragment extends BaseFragment {
         groupList = new ArrayList<>();
         groupDB = new GroupDB();
 
-        groupAdapter = new GroupAdapter(getContext(), groupList);
+        groupAdapter = new GroupAdapter(getContext(), groupList, this);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -196,5 +194,14 @@ public class GroupSmsFragment extends BaseFragment {
 
             }
         });
+    }
+
+    @Override
+    public void itemClicked(Group group) {
+        //Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
+        //groupDB.deleteGroup(group.getGroupId());
+        //groupList.remove(group);
+        //groupAdapter.notifyDataSetChanged();
+        startActivity(new Intent(getContext(), PhoneActivity.class).putExtra("groupId", group.getGroupId()));
     }
 }

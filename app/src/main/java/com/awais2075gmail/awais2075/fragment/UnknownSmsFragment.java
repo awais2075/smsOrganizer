@@ -27,7 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class UnknownSmsFragment extends BaseFragment implements ItemClickListener{
+public class UnknownSmsFragment extends BaseFragment implements ItemClickListener<SMS>{
 
     private int smsCount;
     private List<SMS> smsList;
@@ -174,8 +174,8 @@ public class UnknownSmsFragment extends BaseFragment implements ItemClickListene
     }
 
     private void setRecyclerView(List<SMS> smsList) {
-        conversationAdapter = new ConversationAdapter(getContext(), smsList);
-        conversationAdapter.setItemClickListener(this);
+        conversationAdapter = new ConversationAdapter(getContext(), smsList, this);
+        //conversationAdapter.setItemClickListener(this);
         //item click
 
         recyclerview.setAdapter(conversationAdapter);
@@ -184,22 +184,17 @@ public class UnknownSmsFragment extends BaseFragment implements ItemClickListene
 
 
     @Override
-    public void itemClicked(long smsId, long smsThreadId, String smsNumber, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType) {
-        //Toast.makeText(getContext(), smsType + "", Toast.LENGTH_SHORT).show();
+    public void itemClicked(SMS sms) {
+        //Toast.makeText(getContext(), smsAddress + "", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getContext(), MessageActivity.class);
-        intent.putExtra("smsNumber", smsNumber);
-        intent.putExtra("smsAddress", smsAddress);
-        intent.putExtra(Constants.threadId, "thread_id='" + smsThreadId + "'".toString());
+        intent.putExtra("smsNumber", sms.getSmsNumber());
+        intent.putExtra("smsAddress", sms.getSmsAddress());
+        intent.putExtra(Constants.threadId, "thread_id='" + sms.getSmsThreadId()+ "'".toString());
         startActivity(intent);
+
+        //startActivity(new Intent(getActivity(), MessageActivity.class).putExtra(Constants.threadId, "thread_id='" + smsThreadId + "'".toString()));
+
+        //startActivity(new Intent(getActivity(), TestActivity.class));
     }
 
-    @Override
-    public void onClickListener(String id, int position) {
-
-    }
-
-    @Override
-    public void onLongClickListener(String id, int position) {
-
-    }
 }

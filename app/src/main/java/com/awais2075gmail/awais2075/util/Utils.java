@@ -1,22 +1,10 @@
 package com.awais2075gmail.awais2075.util;
 
-import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
-import android.widget.Toast;
 
-import com.awais2075gmail.awais2075.firebase.Group;
 import com.awais2075gmail.awais2075.model.Contact;
 import com.awais2075gmail.awais2075.model.SMS;
-import com.awais2075gmail.awais2075.receiver.DeliverReceiver;
-import com.awais2075gmail.awais2075.receiver.SentReceiver;
 import com.google.firebase.database.DatabaseReference;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -24,11 +12,7 @@ import com.google.i18n.phonenumbers.Phonenumber;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-
-import static android.content.Context.MODE_APPEND;
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Muhammad Awais Rashi on 30-Nov-17.

@@ -22,11 +22,12 @@ public class ConversationAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List<SMS> conversationList;
-    private ItemClickListener itemClickListener;
+    private ItemClickListener listener;
 
-    public ConversationAdapter(Context context, List<SMS> conversationList) {
+    public ConversationAdapter(Context context, List<SMS> conversationList, ItemClickListener listener) {
         this.context = context;
         this.conversationList = conversationList;
+        this.listener = listener;
     }
 
     @Override
@@ -45,9 +46,6 @@ public class ConversationAdapter extends RecyclerView.Adapter {
         return (conversationList == null) ? 0 : conversationList.size();
     }
 
-    public void setItemClickListener(ItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }
 
     private class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView text_smsAddress;
@@ -84,11 +82,11 @@ public class ConversationAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            if (itemClickListener != null){
+            if (listener != null){
 
                 conversationList.get(getAdapterPosition()).setSmsReadState("1");
                 notifyItemChanged(getAdapterPosition());
-                long smsId = conversationList.get(getAdapterPosition()).getSmsId();
+                /*long smsId = conversationList.get(getAdapterPosition()).getSmsId();
                 long smsThreadId = conversationList.get(getAdapterPosition()).getSmsThreadId();
                 String smsNumber = conversationList.get(getAdapterPosition()).getSmsNumber();
                 String smsAddress = conversationList.get(getAdapterPosition()).getSmsAddress();
@@ -96,8 +94,8 @@ public class ConversationAdapter extends RecyclerView.Adapter {
                 String smsDate = conversationList.get(getAdapterPosition()).getSmsDate();
                 String smsReadState = conversationList.get(getAdapterPosition()).getSmsReadState();
                 String smsType = conversationList.get(getAdapterPosition()).getSmsType();
-
-                itemClickListener.itemClicked(smsId, smsThreadId, smsNumber, smsAddress, smsBody, smsReadState, smsDate, smsType);
+*/
+                listener.itemClicked(conversationList.get(getAdapterPosition()));
             }
         }
     }

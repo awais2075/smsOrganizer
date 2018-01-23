@@ -6,10 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.awais2075gmail.awais2075.R;
+import com.awais2075gmail.awais2075._interface.ItemClickListener;
 import com.awais2075gmail.awais2075.model.Contact;
 
 import net.igenius.customcheckbox.CustomCheckBox;
@@ -17,17 +20,17 @@ import net.igenius.customcheckbox.CustomCheckBox;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Muhammad Awais Rashi on 03-Dec-17.
- */
-
-public class PhoneAdapter extends RecyclerView.Adapter {
+public class PhoneAdapter extends RecyclerView.Adapter implements Filterable{
     private List<Contact> phoneList;
+    private List<Contact> phoneListFiltered;
+    private ItemClickListener listener;
     private Context context;
 
-    public PhoneAdapter(List<Contact> phoneList, Context context) {
-        this.phoneList = phoneList;
+    public PhoneAdapter(Context context, List<Contact> phoneList, ItemClickListener listener) {
         this.context = context;
+        this.phoneList = phoneList;
+        this.phoneListFiltered = phoneList;
+        this.listener = listener;
     }
 
     @Override
@@ -72,6 +75,40 @@ public class PhoneAdapter extends RecyclerView.Adapter {
         return true;
     }
 
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    phoneList = phoneListFiltered;
+                } else {
+                    List<Contact> filteredList = new ArrayList<>();
+                    for (Contact contact: phoneListFiltered) {
+                        if (contact.getContactName().toLowerCase().contains(charString.toLowerCase()) || contact.getContactNumber().contains(charSequence)) {
+                            filteredList.add(contact);
+                        }
+                    }
+
+                    phoneList = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = phoneList;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults filterResults) {
+                phoneList = (ArrayList<Contact>) filterResults.values;
+                notifyDataSetChanged();
+
+            }
+        };
+    }
+
+
     private class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private CustomCheckBox check_phone;
         private TextView text_phoneName;
@@ -80,6 +117,7 @@ public class PhoneAdapter extends RecyclerView.Adapter {
 
         private MyHolder(View itemView) {
             super(itemView);
+            //this.setIsRecyclable(false);
 
             text_phoneName = itemView.findViewById(R.id.text_phoneName);
             text_phoneNumber = itemView.findViewById(R.id.text_phoneNumber);
@@ -88,12 +126,12 @@ public class PhoneAdapter extends RecyclerView.Adapter {
 
         }
 
-        private void bind(Contact contact) {
+        private void bind(final Contact contact) {
             text_phoneName.setText(contact.getContactName());
             text_phoneNumber.setText(contact.getContactNumber());
             check_phone.setTag(phoneList.get(getAdapterPosition()));
             check_phone.setOnCheckedChangeListener(null);
-            //check_phone.setChecked(contact.isSelected(),true);
+            check_phone.setChecked(contact.isSelected());
             check_phone.setClickable(false);
 
             //check_phone.setChecked(!check_phone.isChecked(), true);
@@ -102,9 +140,13 @@ public class PhoneAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
+            listener.itemClicked(phoneList.get(getAdapterPosition()));
             check_phone.setChecked(!check_phone.isChecked(), true);
             phoneList.get(getAdapterPosition()).setSelected(check_phone.isChecked());
-            Toast.makeText(context, phoneList.get(getAdapterPosition()).getContactName()+"", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, phoneList.get(getAdapterPosition()).getContactName()+"", Toast.LENGTH_SHORT).show();
+
+
         }
     }
+
 }

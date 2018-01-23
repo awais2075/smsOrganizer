@@ -1,5 +1,6 @@
-package com.awais2075gmail.awais2075.firebase;
+package com.awais2075gmail.awais2075.database;
 
+import com.awais2075gmail.awais2075.model.Group;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Muhammad Awais Rashi on 18-Jan-18.
+ * Created by Muhammad Awais Rashid on 18-Jan-18.
  */
 
 public class GroupDB {
@@ -38,37 +39,13 @@ public class GroupDB {
         //removing artist
         groupReference.removeValue();
 
-        DatabaseReference contactReference = FirebaseDatabase.getInstance().getReference("Contact").child(groupId);
+        /*DatabaseReference contactReference = FirebaseDatabase.getInstance().getReference("Contact").child(groupId);
         contactReference.removeValue();
-
+*/
         return true;
     }
 
     public DatabaseReference getAllGroups() {
-        /*try {
-            mDatabaseReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        if (snapshot.getValue(Group.class).getUserId().contains(userId)) {
-                            Group group = snapshot.getValue(Group.class);
-                            groupList.add(group);
-                            count++;
-                        }
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-            Thread.sleep(2000);
-
-        } catch (InterruptedException e) {
-            return 0;
-        }*/
         return databaseReference;
     }
 }

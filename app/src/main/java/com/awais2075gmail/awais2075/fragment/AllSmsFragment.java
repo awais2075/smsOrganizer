@@ -1,10 +1,7 @@
 package com.awais2075gmail.awais2075.fragment;
 
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,7 +18,6 @@ import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075.activity.MessageActivity;
 import com.awais2075gmail.awais2075.activity.PhoneActivity;
 import com.awais2075gmail.awais2075.adapter.ConversationAdapter;
-import com.awais2075gmail.awais2075.firebase.GroupActivity;
 import com.awais2075gmail.awais2075.model.SMS;
 import com.awais2075gmail.awais2075.util.Constants;
 import com.awais2075gmail.awais2075.util.Utils;
@@ -32,7 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AllSmsFragment extends BaseFragment implements ItemClickListener, View.OnClickListener {
+public class AllSmsFragment extends BaseFragment implements View.OnClickListener, ItemClickListener<SMS> {
 
     private int smsCount;
     private List<SMS> smsList;
@@ -180,8 +176,8 @@ public class AllSmsFragment extends BaseFragment implements ItemClickListener, V
     }
 
     private void setRecyclerView(List<SMS> smsList) {
-        conversationAdapter = new ConversationAdapter(getContext(), smsList);
-        conversationAdapter.setItemClickListener(this);
+        conversationAdapter = new ConversationAdapter(getContext(), smsList, this);
+        //conversationAdapter.setItemClickListener(this);
         //item click
 
         recyclerview.setAdapter(conversationAdapter);
@@ -190,12 +186,12 @@ public class AllSmsFragment extends BaseFragment implements ItemClickListener, V
 
 
     @Override
-    public void itemClicked(long smsId, long smsThreadId, String smsNumber, String smsAddress, String smsBody, String smsReadState, String smsDate, String smsType) {
+    public void itemClicked(SMS sms) {
         //Toast.makeText(getContext(), smsAddress + "", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getContext(), MessageActivity.class);
-        intent.putExtra("smsNumber", smsNumber);
-        intent.putExtra("smsAddress", smsAddress);
-        intent.putExtra(Constants.threadId, "thread_id='" + smsThreadId + "'".toString());
+        intent.putExtra("smsNumber", sms.getSmsNumber());
+        intent.putExtra("smsAddress", sms.getSmsAddress());
+        intent.putExtra(Constants.threadId, "thread_id='" + sms.getSmsThreadId()+ "'".toString());
         startActivity(intent);
 
         //startActivity(new Intent(getActivity(), MessageActivity.class).putExtra(Constants.threadId, "thread_id='" + smsThreadId + "'".toString()));
@@ -203,15 +199,8 @@ public class AllSmsFragment extends BaseFragment implements ItemClickListener, V
         //startActivity(new Intent(getActivity(), TestActivity.class));
     }
 
-    @Override
-    public void onClickListener(String id, int position) {
 
-    }
 
-    @Override
-    public void onLongClickListener(String id, int position) {
-
-    }
 
     @Override
     public void onClick(View v) {
@@ -221,5 +210,6 @@ public class AllSmsFragment extends BaseFragment implements ItemClickListener, V
                 break;
         }
     }
+
 
 }
