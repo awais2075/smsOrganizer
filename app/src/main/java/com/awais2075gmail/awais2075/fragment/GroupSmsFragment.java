@@ -4,45 +4,56 @@ package com.awais2075gmail.awais2075.fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075._interface.ItemClickListener;
+import com.awais2075gmail.awais2075.activity.ContactActivity;
+import com.awais2075gmail.awais2075.activity.MessageActivity;
 import com.awais2075gmail.awais2075.activity.PhoneActivity;
+import com.awais2075gmail.awais2075.database.GroupDB;
+import com.awais2075gmail.awais2075.decoration.MyDividerItemDecoration;
 import com.awais2075gmail.awais2075.model.Group;
 import com.awais2075gmail.awais2075.adapter.GroupAdapter;
-import com.awais2075gmail.awais2075.database.GroupDB;
 import com.awais2075gmail.awais2075.util.Utils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+
+import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GroupSmsFragment extends BaseFragment implements ItemClickListener<Group>{
+public class GroupSmsFragment extends BaseFragment implements View.OnClickListener, ItemClickListener<Group> {
 
-    private Toolbar toolbar;
-    private RecyclerView recyclerView;
-    private GroupAdapter groupAdapter;
     private List<Group> groupList;
-    private GroupDB groupDB;
+    private GroupAdapter groupAdapter;
     private String userId;
+    private GroupDB groupDB;
+    private HashSet<String> hs;
+    private DatabaseReference databaseReference;
+    private FirebaseDatabase firebaseDatabase;
+
 
 
     public GroupSmsFragment() {
@@ -52,14 +63,11 @@ public class GroupSmsFragment extends BaseFragment implements ItemClickListener<
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        userId = Utils.userId;
     }
-
-
 
     @Override
     protected int getFragmentLayout() {
-        return R.layout.fragment_group_sms;
+        return R.layout.fragment_layout;
     }
 
     @Override
@@ -78,115 +86,47 @@ public class GroupSmsFragment extends BaseFragment implements ItemClickListener<
     }
 
     private void init(View view) {
-        Toast.makeText(getContext(), "User ID :"+userId, Toast.LENGTH_SHORT).show();
-        toolbar = view.findViewById(R.id.toolbar);
-        //view.setSupportActionBar(toolbar);
-        recyclerView = view.findViewById(R.id.recyclerview);
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("Group").child(Utils.userId);
+        groupDB = new GroupDB(databaseReference);
+
+        view.findViewById(R.id.appBarLayout).setVisibility(View.GONE);
+
+        view.findViewById(R.id.fab).setOnClickListener(this);
 
         groupList = new ArrayList<>();
-        groupDB = new GroupDB();
+        groupAdapter = new GroupAdapter(groupList, this);
 
-        groupAdapter = new GroupAdapter(getContext(), groupList, this);
+        ((RecyclerView) view.findViewById(R.id.recyclerView)).setLayoutManager(new LinearLayoutManager(getContext()));
+        ((RecyclerView) view.findViewById(R.id.recyclerView)).setItemAnimator(new DefaultItemAnimator());
+        ((RecyclerView) view.findViewById(R.id.recyclerView)).addItemDecoration(new MyDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL, 16));
+        ((RecyclerView) view.findViewById(R.id.recyclerView)).setAdapter(groupAdapter);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(groupAdapter);
 
-        groupDB.init();
-        getAllGroups();
-
-        view.findViewById(R.id.floatingActionButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialogBox();
-            }
-        });
+        setRecyclerView(databaseReference);
 
     }
 
-    private void showDialogBox() {
-        final EditText edit_groupName;
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        View mView = layoutInflaterAndroid.inflate(R.layout.dialog_box_add_group, null);
-        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(getContext());
-        alertDialogBuilderUserInput.setView(mView);
-
-        edit_groupName = mView.findViewById(R.id.edit_groupName);
-        alertDialogBuilderUserInput
-                .setCancelable(false)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogBox, int id) {
-                        String groupName = edit_groupName.getText().toString();
-                        /*if (TextUtils.isEmpty(groupName) || hs.contains(groupName.toLowerCase())) {
-                            edit_groupName.setError("Enter again");
-                            edit_groupName.requestFocus();
-
-                            return;
-                        } else {
-                            addGroup(groupName);
-                        }*/
-                        addGroup(groupName);
-                    }
-                })
-
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogBox, int id) {
-                                dialogBox.cancel();
-                            }
-                        });
-
-        AlertDialog alertDialog = alertDialogBuilderUserInput.create();
-        alertDialog.show();
-    }
-
-    private void addGroup(String groupName) {
-        /*//String groupName = edit_groupName.getText().toString().trim();
-
-
-       // if (!TextUtils.isEmpty(groupName) && !hs.contains(groupName.toLowerCase())) {
-            String groupId = mDatabaseReference.push().getKey();
-
-
-            mDatabaseReference.child(groupId).setValue(new Group(groupId, groupName, userId));
-
-            edit_groupName.setText("");
-            //groupAdapter.notifyDataSetChanged();
-            Toast.makeText(this, "Group Added Successfully", Toast.LENGTH_SHORT).show();
-
-        //} else {
-            edit_groupName.setError("Error");
-        //}*/
-        if (groupDB.addGroup(groupName, userId)) {
-            Toast.makeText(getContext(), "Added", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "Not added", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    private void getAllGroups() {
-
-        //Toast.makeText(this, "Groups are "+groupsDB.getAllGroups(Utils.userId)+"", Toast.LENGTH_SHORT).show();
-        DatabaseReference mDatabaseReference = groupDB.getAllGroups();
-        mDatabaseReference.addValueEventListener(new ValueEventListener() {
-
+    private void setRecyclerView(final DatabaseReference dRef) {
+        dRef.orderByChild("groupName").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 groupList.clear();
-                //Toast.makeText(getContext(), dataSnapshot.getChildrenCount() + " contacts", Toast.LENGTH_SHORT).show();
-                int count = 0;
+                hs = new HashSet<>();
+                Toast.makeText(getContext(), dataSnapshot.child("Contact").getChildrenCount()+" contacts", Toast.LENGTH_SHORT).show();
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if (snapshot.getValue(Group.class).getUserId().contains(userId)) {
-                        count++;
-                        Group group = snapshot.getValue(Group.class);
-                        groupList.add(group);
-                        groupAdapter.notifyDataSetChanged();
-                        //hs.add(group.getGroupName().toLowerCase());
+                    /*if (snapshot.getValue(Group.class).getUserId().contains(Utils.userId)) {
+                        groupList.add(snapshot.getValue(Group.class));
+                        hs.add(snapshot.getValue(Group.class).getGroupName().toLowerCase());
                     }
-//                    Toast.makeText(GroupActivity.this, group.getGroupName(), Toast.LENGTH_SHORT).show();
+                    groupAdapter.notifyDataSetChanged();*/
+                    groupList.add(snapshot.getValue(Group.class));
+                    hs.add(snapshot.getValue(Group.class).getGroupName().toLowerCase());
+                    groupAdapter.notifyDataSetChanged();
                 }
-                //Toast.makeText(getContext(), count + " items", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -197,11 +137,103 @@ public class GroupSmsFragment extends BaseFragment implements ItemClickListener<
     }
 
     @Override
-    public void itemClicked(Group group) {
-        //Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
-        //groupDB.deleteGroup(group.getGroupId());
-        //groupList.remove(group);
-        //groupAdapter.notifyDataSetChanged();
-        startActivity(new Intent(getContext(), PhoneActivity.class).putExtra("groupId", group.getGroupId()));
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fab:
+                showAlertDialogBox();
+                break;
+        }
     }
+
+    private void showAlertDialogBox() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View view = getLayoutInflater().inflate(R.layout.alert_dialog, null);
+
+        final EditText text_groupName = view.findViewById(R.id.edit_groupName);
+        final FancyButton button_addGroup = view.findViewById(R.id.button_addGroup);
+
+        builder.setView(view);
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+        button_addGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (hs.contains(text_groupName.getText().toString().toLowerCase())) {
+                    Toast.makeText(getContext(), "Already Exists", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (groupDB.addGroup(Utils.userId, text_groupName.getText().toString())) {
+                        Toast.makeText(getContext(), "Group Added Successfully", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
+                    } else {
+                        Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+
+            }
+        });
+    }
+
+    @Override
+    public void itemClicked(Group group, int position) {
+        startActivity(new Intent(getContext(), ContactActivity.class).putExtra("groupId", group.getGroupId()));
+    }
+
+    @Override
+    public void itemLongClicked(Group group, int position) {
+        contextMenu(group.getGroupId(), position);
+    }
+
+    private void contextMenu(final String groupId, final int position) {
+        String[] items = {"Delete", "Edit"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext()
+                , android.R.layout.simple_list_item_1, android.R.id.text1, items);
+
+        new AlertDialog.Builder(getContext())
+                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case 0:
+                                dialogInterface.dismiss();
+                                deleteDialog(groupId, position);
+                                break;
+                            case 1:
+                                Toast.makeText(getContext(), "Edit", Toast.LENGTH_SHORT).show();
+                                dialogInterface.dismiss();
+                                break;
+                        }
+                    }
+                })
+                .show();
+
+    }
+
+    private void deleteDialog(final String groupId, final int position) {
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+        alert.setMessage("Are you sure you want to delete this message?");
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                groupDB.deleteGroup(groupId);
+                groupAdapter.notifyItemRemoved(position);
+            }
+
+        });
+        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+        alert.create();
+        alert.show();
+    }
+
+
 }

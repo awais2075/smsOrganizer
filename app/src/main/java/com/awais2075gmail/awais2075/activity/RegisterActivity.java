@@ -29,7 +29,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         //setContentView(R.layout.activity_register);
 
         init();
-        //emailInit();
+
     }
 
     @Override

@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.awais2075gmail.awais2075.activity.BaseActivity;
 import com.awais2075gmail.awais2075.activity.ConversationActivity;
 import com.awais2075gmail.awais2075.activity.MessageActivity;
 import com.awais2075gmail.awais2075.adapter.ConversationAdapter;
@@ -30,14 +29,11 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Created by Muhammad Awais Rashi on 21-Dec-17.
+ * Created by Muhammad Awais Rashid on 21-Dec-17.
  */
 
 public abstract class BaseFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private String cursorFilter;
-    //private ConversationAdapter conversationAdapter;
-    private int count = 0;
-    private List<SMS> unknownSmsList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +51,6 @@ public abstract class BaseFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        //Constants.showProgressDialog(getContext());
         String selection = null;
         String[] selectedArgs = null;
 
@@ -63,14 +58,11 @@ public abstract class BaseFragment extends Fragment implements LoaderManager.Loa
             selection = Constants.SMS_SELECTION_SEARCH;
             selectedArgs = new String[]{"%", cursorFilter, "%", "%" + cursorFilter + "%"};
         }
-        //Toast.makeText(getContext(), "Cursor Loader", Toast.LENGTH_SHORT).show();
         return new CursorLoader(getContext(), Constants.GENERAL_SMS_URI, null, selection, selectedArgs, Constants.SORT_DESC);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        //pg_gcLoader.setVisibility(View.GONE);
-        //Constants.hideProgressDialog();
         if (cursor != null && cursor.getCount() > 0) {
             getAllSms(cursor);
             cursor.close();
@@ -84,40 +76,8 @@ public abstract class BaseFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        //smsList = null;
-        //conversationAdapter.notifyDataSetChanged();
     }
 
-    protected void setUnknownSmsList(List<SMS> unknownSmsList) {
-        this.unknownSmsList = unknownSmsList;
-    }
-
-    protected List<SMS> getUnknownSmsList() {
-        return unknownSmsList;
-    }
-
-    /*@Override
-    public void onResume() {
-        super.onResume();
-
-        IntentFilter intentFilter = new IntentFilter(
-                "android.intent.action.MAIN");
-
-        BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                boolean new_sms = intent.getBooleanExtra("new_sms", false);
-
-                if (new_sms)
-                    getLoaderManager().restartLoader(Constants.ALL_SMS_LOADER, null, BaseFragment.this);
-
-            }
-        };
-
-        getContext().registerReceiver(mReceiver, intentFilter);
-    }*/
     @Override
     public void onResume() {
         super.onResume();
@@ -140,6 +100,4 @@ public abstract class BaseFragment extends Fragment implements LoaderManager.Loa
 
         getContext().registerReceiver(mReceiver, intentFilter);
     }
-
-
 }

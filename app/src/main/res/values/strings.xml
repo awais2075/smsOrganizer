@@ -47,12 +47,9 @@
     <!--Action Settings-->
 
     <string name="action_settings">Settings</string>
-    <string name="action_logout">Logout</string>
-    <string name="search_hint">Type name…</string>
     <string name="action_search">Search</string>
 
     <!--activity_login.xml-->
-    <string name="text_login...">Login to your account</string>
     <string name="button_googleSignIn">CONNECT WITH GOOGLE</string>
     <string name="button_facebookSignIn">CONNECT WITH FACEBOOK</string>
     <string name="text_or...">Or</string>
@@ -70,12 +67,7 @@
     <string name="button_alreadyHaveAccount">Already have account?</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_conversation">Conversations</string>
-    <string name="title_activity_test">TestActivity</string>
-    <string name="title_activity_group">GroupActivity</string>
-
-
 
 
 </resources>

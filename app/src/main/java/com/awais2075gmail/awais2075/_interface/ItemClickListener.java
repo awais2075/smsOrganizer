@@ -7,7 +7,8 @@ import com.awais2075gmail.awais2075.model.SMS;
  */
 
 public interface ItemClickListener<Model> {
-    public void itemClicked(Model model);
+    public void itemClicked(Model model, int position);
+    public void itemLongClicked (Model model, int position);
 
 
 

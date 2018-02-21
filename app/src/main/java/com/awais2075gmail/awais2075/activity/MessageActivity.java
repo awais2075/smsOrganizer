@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteException;
@@ -16,6 +17,8 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,11 +27,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.awais2075gmail.awais2075.R;
+import com.awais2075gmail.awais2075._interface.ItemClickListener;
 import com.awais2075gmail.awais2075.adapter.MessageAdapter;
 import com.awais2075gmail.awais2075.model.SMS;
 import com.awais2075gmail.awais2075.receiver.DeliverReceiver;
@@ -43,13 +48,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MessageActivity extends BaseActivity implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class MessageActivity extends AppCompatActivity implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor>, ItemClickListener<SMS> {
 
-    private RecyclerView recyclerView;
-    private Toolbar toolbar;
     private MessageAdapter messageAdapter;
     private List<SMS> messageList = new ArrayList<>();
-    private LinearLayoutManager linearLayoutManager;
     private String cursorFilter;
     private String smsId;
     private String smsNumber;
@@ -96,26 +98,25 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_message);
+        setContentView(R.layout.activity_message);
         init();
 
 
     }
 
-    @Override
-    protected int setView() {
-        return R.layout.activity_message;
-    }
 
     private void init() {
-        smsId = getIntent().getStringExtra(Constants.threadId).toString();
-        smsAddress = getIntent().getStringExtra("smsAddress");
-        smsNumber = getIntent().getStringExtra("smsNumber");
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            Toast.makeText(this, "No Null", Toast.LENGTH_SHORT).show();
+            smsId = bundle.getString(Constants.threadId).toString();
+            smsAddress = bundle.getString("smsAddress");
+            smsNumber = bundle.getString("smsNumber");
+        }
 
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        ((Toolbar)findViewById(R.id.toolbar)).setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -124,22 +125,22 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(smsAddress);
         getSupportActionBar().setSubtitle(smsNumber);
-        recyclerView =  findViewById(R.id.recycler_view);
+
+        findViewById(R.id.fab).setVisibility(View.GONE);
+
         edit_textMessage = findViewById(R.id.edit_textMessage);
         button_sendMessage = findViewById(R.id.button_sendMessage);
         button_sendMessage.setOnClickListener(this);
 
         messageList = new ArrayList<>();
-        messageAdapter = new MessageAdapter(this, messageList);
+        messageAdapter = new MessageAdapter( messageList, this);
 
 
-        linearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
 
-        recyclerView.setLayoutManager(linearLayoutManager);
+        ((RecyclerView)findViewById(R.id.recyclerView)).setLayoutManager(linearLayoutManager);
 
-/*        messageAdapter = new MessageAdapter(this, messageList);
-        recyclerView.setAdapter(new MessageAdapter());*/
 
         getSupportLoaderManager().initLoader(Constants.ALL_SMS_LOADER, null, this);
 
@@ -157,7 +158,7 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void sendMessage() {
-        send(smsNumber,edit_textMessage.getText().toString());
+        Utils.send(this, smsNumber,edit_textMessage.getText().toString());
     }
 
 
@@ -250,16 +251,12 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
 
     private void setRecyclerView(List<SMS> messageList) {
 
-        messageAdapter = new MessageAdapter(this, messageList);
-        recyclerView.setAdapter(messageAdapter);
+        messageAdapter = new MessageAdapter(messageList,this);
+        ((RecyclerView)findViewById(R.id.recyclerView)).setAdapter(messageAdapter);
 
         Toast.makeText(this, messageAdapter.getItemCount()+" "+messageList.size(), Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -376,5 +373,83 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
 
         this.registerReceiver(mReceiver, intentFilter);
     }
+
+    @Override
+    public void itemClicked(SMS sms, int position) {
+        deleteSms(sms.getSmsId(), position);
+    }
+
+    @Override
+    public void itemLongClicked(SMS sms, int position) {
+
+        contextMenu(sms.getSmsId(), position);
+
+    }
+
+    private void contextMenu(final long smsId, final int position) {
+        String[] items = {"Delete", "Forward"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this
+                , android.R.layout.simple_list_item_1, android.R.id.text1, items);
+
+        new AlertDialog.Builder(this)
+                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case 0:
+                                dialogInterface.dismiss();
+                                deleteDialog(smsId, position);
+                                break;
+                            case 1:
+                                Toast.makeText(MessageActivity.this, "Forward", Toast.LENGTH_SHORT).show();
+                                dialogInterface.dismiss();
+                                break;
+                        }
+                    }
+                })
+                .show();
+
+    }
+
+    private void deleteDialog(final long smsId, final int position) {
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage("Are you sure you want to delete this message?");
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteSms(smsId, position);
+                //deleteSMS(smsList.get(getAdapterPosition()).getSmsId(), getAdapterPosition());
+
+            }
+
+        });
+        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+        alert.create();
+        alert.show();
+    }
+
+    private void deleteSms(long smsId, int position) {
+        long affected = this.getContentResolver().delete(
+                Uri.parse("content://sms/" + smsId), null, null);
+        if (affected != 0) {
+
+            messageList.remove(position);
+            messageAdapter.notifyItemRemoved(position);
+            Toast.makeText(this, "Sms Deleted", Toast.LENGTH_SHORT).show();
+
+            //notifyItemRemoved(position);
+        } else {
+            Toast.makeText(this, "App is not Set as Default", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 }

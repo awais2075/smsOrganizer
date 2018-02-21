@@ -1,118 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/phoneView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true">
-
-    <!--<net.igenius.customcheckbox.CustomCheckBox
-        android:id="@+id/check_phone"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_margin="20dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:color_checked="@color/colorPrimary"
-        app:color_tick="@color/white"
-        app:color_unchecked="@color/white"
-        app:color_unchecked_stroke="@color/grey"
-        app:small_tick="false"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
 
-    <TextView
-        android:id="@+id/text_phoneName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@color/contact_name"
-        android:textSize="@dimen/contact_name"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Muhammad Awais Rashid"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/check_phone"
-        app:layout_constraintTop_toTopOf="parent" />
+    <com.awais2075gmail.awais2075.layout.CustomItemLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_phoneNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/contact_number"
-        android:textSize="@dimen/contact_number"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="0341 9022273"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/check_phone"
-        app:layout_constraintTop_toBottomOf="@+id/text_phoneName" />-->
-
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:contentDescription="TODO"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/ic_phone" />
-
-    <TextView
-        android:id="@+id/text_phoneName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:ellipsize="end"
-        android:fontFamily="sans-serif-medium"
-        android:maxLines="1"
-        android:text="Muhammad Awais Rashid"
-        android:textColor="@color/contact_name"
-        android:textSize="@dimen/contact_name"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="@+id/imageView2" />
-
-    <TextView
-        android:id="@+id/text_phoneNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="+92 341 9022273"
-        android:textColor="@color/contact_number"
-        android:textSize="@dimen/contact_number"
-        app:layout_constraintStart_toStartOf="@+id/text_phoneName"
-        app:layout_constraintTop_toBottomOf="@+id/text_phoneName" />
-
-    <net.igenius.customcheckbox.CustomCheckBox
-        android:id="@+id/check_phone"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_margin="20dp"
-        android:layout_marginEnd="8dp"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        app:color_checked="@color/colorPrimary"
-        app:color_tick="@color/white"
-        app:color_unchecked="@color/white"
-        app:color_unchecked_stroke="@color/grey"
-        app:layout_constraintBottom_toBottomOf="@+id/text_phoneName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/text_phoneName"
-        app:layout_constraintTop_toTopOf="@+id/text_phoneName"
-        app:small_tick="false" />
+    </com.awais2075gmail.awais2075.layout.CustomItemLayout>
 </android.support.constraint.ConstraintLayout>

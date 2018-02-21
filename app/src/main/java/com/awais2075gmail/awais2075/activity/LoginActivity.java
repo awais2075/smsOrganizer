@@ -34,8 +34,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         //checkPermissions();
         init();
-        emailInit();
-        gmailInit();
+        isEmailSignedIn();
+        isGoogleSignedIn();
         Toast.makeText(this, Utils.userId+" is userId in Login Activity", Toast.LENGTH_SHORT).show();
 
     }
@@ -83,8 +83,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void onStart() {
         super.onStart();
-        isEmailSignedIn();
-        isGoogleSignedIn();
+
     }
 
     private void signIn() {

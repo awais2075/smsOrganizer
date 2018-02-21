@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.awais2075gmail.awais2075.R;
+import com.awais2075gmail.awais2075._interface.ItemClickListener;
 import com.awais2075gmail.awais2075.model.SMS;
 import com.awais2075gmail.awais2075.util.Constants;
 
@@ -20,15 +21,15 @@ import java.util.List;
  */
 
 public class MessageAdapter extends RecyclerView.Adapter{
-    private Context context;
     private List<SMS> messageList;
+    private ItemClickListener listener;
 
     public MessageAdapter() {
     }
 
-    public MessageAdapter(Context context, List<SMS> messageList) {
-        this.context = context;
+    public MessageAdapter(List<SMS> messageList, ItemClickListener listener) {
         this.messageList = messageList;
+        this.listener = listener;
     }
 
     @Override
@@ -70,37 +71,55 @@ public class MessageAdapter extends RecyclerView.Adapter{
         }
     }
 
-    private class SendHolder extends RecyclerView.ViewHolder {
+    private class SendHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
         private TextView text_sendSmsBody;
         private TextView text_sendSmsDate;
+        private View view_send;
 
 
         public SendHolder(View itemView) {
             super(itemView);
             text_sendSmsBody = itemView.findViewById(R.id.text_sendSmsBody);
             text_sendSmsDate = itemView.findViewById(R.id.text_sendSmsDate);
+            view_send = itemView.findViewById(R.id.view_send);
+            view_send.setOnLongClickListener(this);
         }
 
         private void bind(SMS sms) {
             text_sendSmsBody.setText(sms.getSmsBody());
             text_sendSmsDate.setText(sms.getSmsDate());
         }
+
+        @Override
+        public boolean onLongClick(View v) {
+            listener.itemLongClicked(messageList.get(getAdapterPosition()), getAdapterPosition());
+            return true;
+        }
     }
 
-    private class ReceiveHolder extends RecyclerView.ViewHolder {
+    private class ReceiveHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
         private TextView text_receiveSmsBody;
         private TextView text_receiveSmsDate;
+        private View view_receive;
 
         public ReceiveHolder(View itemView) {
             super(itemView);
             text_receiveSmsBody = itemView.findViewById(R.id.text_receiveSmsBody);
             text_receiveSmsDate = itemView.findViewById(R.id.text_receiveSmsDate);
+            view_receive = itemView.findViewById(R.id.view_receive);
+            view_receive.setOnLongClickListener(this);
         }
 
         private void bind(SMS sms) {
             text_receiveSmsBody.setText(sms.getSmsBody());
             text_receiveSmsDate.setText(sms.getSmsDate());
 
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            listener.itemLongClicked(messageList.get(getAdapterPosition()), getAdapterPosition());
+            return true;
         }
     }
 }

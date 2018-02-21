@@ -17,7 +17,13 @@ public class Contact{
     public Contact(String contactName) {
         this.contactName = contactName;
     }
-    
+
+    public Contact(String contactId, String contactName, String groupId) {
+        this.contactId = contactId;
+        this.contactName = contactName;
+        this.groupId = groupId;
+    }
+
     public Contact(String contactId, String contactName, String contactNumber, String groupId) {
         this.contactId = contactId;
         this.contactName = contactName;
@@ -40,32 +46,16 @@ public class Contact{
         return contactId;
     }
 
-    public void setContactId(String contactId) {
-        this.contactId = contactId;
-    }
-
     public String getContactName() {
         return contactName;
-    }
-
-    public void setContactName(String contactName) {
-        this.contactName = contactName;
     }
 
     public String getContactNumber() {
         return contactNumber;
     }
 
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
-
     public String getGroupId() {
         return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
     }
 
     public boolean isSelected() {

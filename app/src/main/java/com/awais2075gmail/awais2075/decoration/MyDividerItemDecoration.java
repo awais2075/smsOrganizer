@@ -1,4 +1,4 @@
-package com.awais2075gmail.awais2075;
+package com.awais2075gmail.awais2075.decoration;
 
 import android.support.v7.widget.RecyclerView;
 

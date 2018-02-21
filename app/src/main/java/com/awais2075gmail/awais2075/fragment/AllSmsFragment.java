@@ -1,11 +1,13 @@
 package com.awais2075gmail.awais2075.fragment;
 
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,9 +17,12 @@ import android.widget.Toast;
 
 import com.awais2075gmail.awais2075._interface.ItemClickListener;
 import com.awais2075gmail.awais2075.R;
+import com.awais2075gmail.awais2075.activity.CreateSmsActivity;
 import com.awais2075gmail.awais2075.activity.MessageActivity;
 import com.awais2075gmail.awais2075.activity.PhoneActivity;
 import com.awais2075gmail.awais2075.adapter.ConversationAdapter;
+import com.awais2075gmail.awais2075.classification.Spam;
+import com.awais2075gmail.awais2075.decoration.MyDividerItemDecoration;
 import com.awais2075gmail.awais2075.model.SMS;
 import com.awais2075gmail.awais2075.util.Constants;
 import com.awais2075gmail.awais2075.util.Utils;
@@ -32,8 +37,8 @@ public class AllSmsFragment extends BaseFragment implements View.OnClickListener
 
     private int smsCount;
     private List<SMS> smsList;
+    private View view;
     private ConversationAdapter conversationAdapter;
-    private RecyclerView recyclerview;
     private RecyclerView.LayoutManager mlinearLayoutManager;
 
     public AllSmsFragment() {
@@ -50,30 +55,36 @@ public class AllSmsFragment extends BaseFragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(getFragmentLayout(), container, false);
+        this.view = view;
         //Toast.makeText(getContext(), "All Sms Fragment", Toast.LENGTH_SHORT).show();
-        init(view);
+        init();
         //getLoaderManager().initLoader(Constants.ALL_SMS_LOADER, null, this);
         return view;
     }
 
-    private void init(View view) {
-        //view.setSupportActionBar(toolBar_allSms);
-        recyclerview = view.findViewById(R.id.recyclerview);
-        //smsList = new ArrayList<>();
-        //conversationAdapter = new ConversationAdapter(getContext(), smsList);
-        mlinearLayoutManager = new LinearLayoutManager(getContext());
-        recyclerview.setLayoutManager(mlinearLayoutManager);
+    private void init() {
+        view.findViewById(R.id.appBarLayout).setVisibility(View.GONE);
+
+        smsList = new ArrayList<>();
+        conversationAdapter = new ConversationAdapter(getContext(), smsList, this);
+        ((RecyclerView) view.findViewById(R.id.recyclerView)).setLayoutManager(new LinearLayoutManager(getContext()));
+        ((RecyclerView) view.findViewById(R.id.recyclerView)).setItemAnimator(new DefaultItemAnimator());
+        ((RecyclerView) view.findViewById(R.id.recyclerView)).addItemDecoration(new MyDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL, 16));
+        ((RecyclerView) view.findViewById(R.id.recyclerView)).setAdapter(conversationAdapter);
+
+
         getLoaderManager().initLoader(Constants.ALL_SMS_LOADER, null, this);
 
 
-        view.findViewById(R.id.floatingActionButton).setOnClickListener(this);
+        view.findViewById(R.id.fab).setOnClickListener(this);
 
 
     }
 
+
     @Override
     protected int getFragmentLayout() {
-        return R.layout.fragment_all_sm;
+        return R.layout.fragment_layout;
     }
 
 
@@ -98,6 +109,7 @@ public class AllSmsFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     protected void getAllSms(Cursor cursor) {
+        Spam spam = new Spam(getContext());
         List<SMS> unknownSmsList = new ArrayList<>();
         List<SMS> listSms = new ArrayList<>();
         HashSet<Long> hashSet = new HashSet<>();
@@ -109,6 +121,7 @@ public class AllSmsFragment extends BaseFragment implements View.OnClickListener
             for (int i = 0; i < smsCount; i++) {
                 boolean knownCheck = false;
                 boolean unknownCheck = false;
+                boolean isSpam = false;
                 long smsThreadId;
                 try {
 
@@ -120,12 +133,13 @@ public class AllSmsFragment extends BaseFragment implements View.OnClickListener
                         //long smsThreadId = cursor.getLong(cursor.getColumnIndexOrThrow("thread_id"));
                         String smsNumber = Utils.isValidNumer(cursor.getString(cursor.getColumnIndexOrThrow("address")), Utils.getCountry(getContext()));
                         String smsAddress = Utils.getName(smsNumber);
+                        String smsBody = cursor.getString(cursor.getColumnIndexOrThrow("body")).trim();
                         if (smsNumber != smsAddress) {
                             knownCheck = true;
                         } else if (smsNumber == smsAddress) {
                             unknownCheck = true;
+                            isSpam = spam.getValue(smsBody);
                         }
-                        String smsBody = cursor.getString(cursor.getColumnIndexOrThrow("body")).trim();
                         String smsReadState = cursor.getString(cursor.getColumnIndexOrThrow("read"));
                         String smsDate = Constants.getDate(cursor.getLong(cursor.getColumnIndexOrThrow("date")), false);
                         String smsType;
@@ -135,7 +149,7 @@ public class AllSmsFragment extends BaseFragment implements View.OnClickListener
                         smsType = Utils.getSmsType(cursor.getString(cursor.getColumnIndexOrThrow("type")));
 
 
-                        sms = new SMS(smsId, smsThreadId, smsNumber, smsAddress, smsBody, smsReadState, smsDate, smsType);
+                        sms = new SMS(smsId, smsThreadId, smsNumber, smsAddress, smsBody, smsReadState, smsDate, smsType, isSpam);
 
 
                     } else {
@@ -159,12 +173,11 @@ public class AllSmsFragment extends BaseFragment implements View.OnClickListener
         }
         cursor.close();
 
-        smsList = listSms;
+        //smsList = listSms;
 
-        Utils.unknownSmsList = unknownSmsList;
-        //setUnknownSmsList(unknownSmsList);
+
         sortAndSetToRecycler(listSms);
-        //Toast.makeText(getContext(), smsList.get(0).getSmsBody()+"", Toast.LENGTH_SHORT).show();
+        Utils.unknownSmsList = unknownSmsList;
     }
 
 
@@ -177,39 +190,36 @@ public class AllSmsFragment extends BaseFragment implements View.OnClickListener
 
     private void setRecyclerView(List<SMS> smsList) {
         conversationAdapter = new ConversationAdapter(getContext(), smsList, this);
-        //conversationAdapter.setItemClickListener(this);
-        //item click
+        ((RecyclerView) view.findViewById(R.id.recyclerView)).setAdapter(conversationAdapter);
 
-        recyclerview.setAdapter(conversationAdapter);
     }
-
 
 
     @Override
-    public void itemClicked(SMS sms) {
-        //Toast.makeText(getContext(), smsAddress + "", Toast.LENGTH_SHORT).show();
+    public void itemClicked(SMS sms, int position) {
         Intent intent = new Intent(getContext(), MessageActivity.class);
         intent.putExtra("smsNumber", sms.getSmsNumber());
         intent.putExtra("smsAddress", sms.getSmsAddress());
-        intent.putExtra(Constants.threadId, "thread_id='" + sms.getSmsThreadId()+ "'".toString());
+        intent.putExtra(Constants.threadId, "thread_id='" + sms.getSmsThreadId() + "'".toString());
         startActivity(intent);
 
-        //startActivity(new Intent(getActivity(), MessageActivity.class).putExtra(Constants.threadId, "thread_id='" + smsThreadId + "'".toString()));
-
-        //startActivity(new Intent(getActivity(), TestActivity.class));
     }
 
-
+    @Override
+    public void itemLongClicked(SMS sms, int position) {
+        Toast.makeText(getContext(),sms.isSpam()+" check", Toast.LENGTH_SHORT).show();
+    }
 
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.floatingActionButton:
-                startActivity(new Intent(getContext(), PhoneActivity.class));
+            case R.id.fab:
+                //startActivity(new Intent(getContext(), CreateSmsActivity.class));
+                Spam spam = new Spam(getContext());
+                Toast.makeText(getContext(), spam.getValue("Dear OLX User Your Ad Top Quality  published prohibited items content Check Posting Rules httpswwwolxcompkqr2vhbcc8") + "", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
-
 
 }

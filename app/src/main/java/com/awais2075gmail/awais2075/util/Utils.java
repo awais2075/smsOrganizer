@@ -1,10 +1,26 @@
 package com.awais2075gmail.awais2075.util;
 
+import android.app.PendingIntent;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
+import android.net.Uri;
+import android.provider.BaseColumns;
+import android.support.v7.app.AlertDialog;
+import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+import com.awais2075gmail.awais2075.activity.MessageActivity;
 import com.awais2075gmail.awais2075.model.Contact;
 import com.awais2075gmail.awais2075.model.SMS;
+import com.awais2075gmail.awais2075.receiver.SentReceiver;
 import com.google.firebase.database.DatabaseReference;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -115,42 +131,93 @@ public class Utils {
             return number;
         }
     }
-/*
-    public static void setDefaults(Context context, String userIdKey, String userIdValue, String loginIdKey, String loginIdValue) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(userIdKey, userIdValue);
-        editor.putString(loginIdKey, loginIdValue);
-        editor.commit();
-    }*/
 
+    public static void send(Context context, String recipient, String message) {
+        final int SMS_DRAFT = 2;
+        final String TAG = "msg";
+        final Uri URI_SENT = Uri.parse("content://sms/sent");
+        final String MESSAGE_SENT_ACTION = "com.android.mms.transaction.MESSAGE_SENT";
+        final String[] PROJECTION_ID = new String[]{BaseColumns._ID};
+        final String ADDRESS = "address";
+        final String READ = "read";
+        final String TYPE = "type";
+        final String BODY = "body";
+        final String DATE = "date";
 
-    /*public static void setDefaults(Context context, String userIdKey, String userIdValue) {
+        Log.d(TAG, "text: "+recipient);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(userIdKey, userIdValue);
-//        editor.putString(loginIdKey, loginIdValue);
-        editor.apply();
+        // save draft
+        final ContentResolver cr = context.getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(TYPE, SMS_DRAFT);
+        values.put(BODY, message);
+        values.put(READ, 1);
+        values.put(ADDRESS, recipient);
+        Uri draft = null;
+        // save sms to content://sms/sent
+        Cursor cursor = cr.query(Uri.parse("content://sms/sent"), PROJECTION_ID,
+                TYPE + " = " + SMS_DRAFT + " AND " + ADDRESS + " = '" + recipient
+                        + "' AND " + BODY + " like '" + message.replace("'", "_") + "'", null, DATE
+                        + " DESC");
+        if (cursor != null && cursor.moveToFirst()) {
+            draft = URI_SENT.buildUpon().appendPath(cursor.getString(0)).build();
+            Log.d(TAG, "skip saving draft: "+ draft);
+        } else {
+            try {
+                draft = cr.insert(URI_SENT, values);
+                Log.d(TAG, "draft saved: "+ draft);
+            } catch (IllegalArgumentException | SQLiteException | NullPointerException e) {
+                Log.e(TAG, "unable to save draft", e);
+            }
+        }
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+
+        Log.d(TAG, "send messages to: "+ recipient);
+
+        final ArrayList<PendingIntent> sentIntents = new ArrayList<>();
+        try {
+            SmsManager smsmgr = SmsManager.getDefault();
+
+            final ArrayList<String> messages = smsmgr.divideMessage(message);
+            for (String m : messages) {
+                Log.d(TAG, "divided messages: "+ m);
+
+                final Intent sent = new Intent(MESSAGE_SENT_ACTION, draft, context, SentReceiver.class);
+                sentIntents.add(PendingIntent.getBroadcast(context, 0, sent, 0));
+            }
+            smsmgr.sendMultipartTextMessage(recipient, null, messages, sentIntents, null);
+            Log.i(TAG, "message sent");
+
+        } catch (Exception e) {
+            Log.e(TAG, "unexpected error", e);
+            for (PendingIntent pi : sentIntents) {
+                if (pi != null) {
+                    try {
+                        pi.send();
+                    } catch (PendingIntent.CanceledException e1) {
+                        Log.e(TAG, "unexpected error", e1);
+                    }
+                }
+            }
+        }
     }
 
-    public static String getUserId(String userIdKey, Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString(userIdKey, null);
+    public static int contextMenu(Context context) {
+        String[] items = {"Delete", "Forward"};
+        final int[] position = {-1};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context
+                , android.R.layout.simple_list_item_1, android.R.id.text1, items);
 
+        new AlertDialog.Builder(context)
+                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        position[0] = i;
+                    }
+                })
+                .show();
+        return position[0];
     }
-
-
-    public static String getLoginId(String loginIdKey, Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString(loginIdKey, null);
-    }
-
-    public static void logout(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
-        //.startActivity(new Intent(mCtx, LoginActivity.class));
-    }*/
 }

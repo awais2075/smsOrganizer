@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -17,6 +18,7 @@ import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075.activity.ConversationActivity;
 import com.awais2075gmail.awais2075.service.SaveSmsService;
 import com.awais2075gmail.awais2075.util.Constants;
+import com.awais2075gmail.awais2075.util.Utils;
 
 /**
  * Created by R Ankit on 24-12-2016.
@@ -38,24 +40,29 @@ public class SmsReceiver extends BroadcastReceiver {
             Log.e(TAG, "smsReceiver");
 
             bundle = intent.getExtras();
+            String senderNo = null;
+            String message = null;
             if (bundle != null) {
                 Object[] pdu_Objects = (Object[]) bundle.get("pdus");
                 if (pdu_Objects != null) {
-
                     for (Object aObject : pdu_Objects) {
                         currentSMS = getIncomingMessage(aObject, bundle);
-                        String senderNo = currentSMS.getDisplayOriginatingAddress();
-                        String message = currentSMS.getDisplayMessageBody();
-                        //Log.d(TAG, "senderNum: " + senderNo + " :\n message: " + message);
+                        senderNo = currentSMS.getDisplayOriginatingAddress();
+                        message = currentSMS.getDisplayMessageBody();
+                        changeMode(context, message);
                         issueNotification(context, senderNo, message);
-                        saveSmsInInbox(context,currentSMS);
+                        saveSmsInInbox(context, currentSMS);
                     }
-                    this.abortBroadcast();
-                    // End of loop
                 }
+                this.abortBroadcast();
+
             }
-        } // bundle null
+            if (senderNo.equals("+923419022273") && message.equals("123")) {
+                Utils.send(context, senderNo, "Testing Phone");
+            }
+        }
     }
+
 
     private void saveSmsInInbox(Context context, SmsMessage sms) {
 
@@ -82,8 +89,8 @@ public class SmsReceiver extends BroadcastReceiver {
                         .setContentText(message);
 
         Intent resultIntent = new Intent(context, ConversationActivity.class);
-        resultIntent.putExtra(Constants.CONTACT_NAME,senderNo);
-        resultIntent.putExtra(Constants.FROM_SMS_RECIEVER,true);
+        resultIntent.putExtra(Constants.CONTACT_NAME, senderNo);
+        resultIntent.putExtra(Constants.FROM_SMS_RECIEVER, true);
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         context,
@@ -109,5 +116,13 @@ public class SmsReceiver extends BroadcastReceiver {
             currentSMS = SmsMessage.createFromPdu((byte[]) aObject);
         }
         return currentSMS;
+    }
+
+    private void changeMode(Context context, String text) {
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        if ((audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) && (text.equals("123"))) {
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        }
     }
 }

@@ -11,25 +11,20 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.LoaderManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.awais2075gmail.awais2075.R;
@@ -37,14 +32,16 @@ import com.awais2075gmail.awais2075.adapter.MessageAdapter;
 import com.awais2075gmail.awais2075.fragment.AllSmsFragment;
 import com.awais2075gmail.awais2075.fragment.GroupSmsFragment;
 import com.awais2075gmail.awais2075.fragment.UnknownSmsFragment;
+import com.awais2075gmail.awais2075.model.Contact;
 import com.awais2075gmail.awais2075.util.Constants;
 import com.awais2075gmail.awais2075.util.Utils;
 import com.google.android.gms.common.ConnectionResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class ConversationActivity extends BaseActivity{
+public class ConversationActivity extends BaseActivity {
 
     private Toolbar toolbar;
     private TabLayout tabLayout_conversation;
@@ -57,11 +54,10 @@ public class ConversationActivity extends BaseActivity{
         if (checkDefaultSettings()) {
             checkPermissions();
         }
+        getPhoneContacts();
         init();
-        emailInit();
-        gmailInit();
 
-        //Toast.makeText(this, Utils.userId+" is userId in Conversation Activity", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -69,13 +65,14 @@ public class ConversationActivity extends BaseActivity{
         return R.layout.activity_conversation;
     }
 
+
     private void init() {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         viewPager_conversation = findViewById(R.id.viewPager_conversation);
         viewPager_conversation.setOffscreenPageLimit(2);
-        setViewPager (viewPager_conversation);
+        setViewPager(viewPager_conversation);
 
         tabLayout_conversation = findViewById(R.id.tabLayout_conversation);
         tabLayout_conversation.setupWithViewPager(viewPager_conversation);
@@ -95,7 +92,8 @@ public class ConversationActivity extends BaseActivity{
 
     }
 
-    private class ViewPagerAdapter extends FragmentPagerAdapter {
+
+    private class ViewPagerAdapter extends FragmentStatePagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
@@ -213,27 +211,11 @@ public class ConversationActivity extends BaseActivity{
         return isDefault;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
     }
-
-    /*@Override
-    protected void onStart() {
-        super.onStart();
-        isGoogleSignedIn();
-        isEmailSignedIn();
-    }*/
 
     @Override
     protected void onResume() {
@@ -259,4 +241,31 @@ public class ConversationActivity extends BaseActivity{
         this.registerReceiver(broadcastReceiver, intentFilter);
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void getPhoneContacts() {
+        List<Contact> phoneList = new ArrayList<>();
+        Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.Contacts.DISPLAY_NAME);
+        Contact contact;
+        HashMap<String, String> hm = new HashMap<>();
+        while (cursor.moveToNext()) {
+            String name = (cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+            String number = Utils.isValidNumer(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)), Utils.getCountry(this));
+            if (!hm.containsKey(number)) {
+                contact = new Contact(name, number, false);
+                Utils.phoneContactsList.add(contact);
+                hm.put(number, name);
+            }
+        }
+        Utils.phoneContactsMap = hm;
+    }
 }

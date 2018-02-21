@@ -4,49 +4,37 @@ import com.awais2075gmail.awais2075.model.Group;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Created by Muhammad Awais Rashid on 18-Jan-18.
+ * Created by Muhammad Awais Rashid on 25-Jan-18.
  */
 
 public class GroupDB {
     private DatabaseReference databaseReference;
-    private List<Group> groupList;
 
-    public GroupDB() {
+    public GroupDB(DatabaseReference databaseReference) {
+        this.databaseReference = databaseReference;
     }
 
-    public void init() {
-        databaseReference = FirebaseDatabase.getInstance().getReference("Group");
-        groupList = new ArrayList<>();
-    }
 
-    public boolean addGroup(String groupName, String userId) {
+    public boolean addGroup(String userId, String groupName) {
         String groupId = databaseReference.push().getKey();
         databaseReference.child(groupId).setValue(new Group(groupId, groupName, userId));
         return true;
     }
 
-    public boolean editGroup(String groupId, String groupName) {
-        return true;
+    public void editGroup (String groudId, String newGroupName) {
     }
 
-    public boolean deleteGroup(String groupId) {
-        DatabaseReference groupReference = FirebaseDatabase.getInstance().getReference("Group").child(groupId);
+    public void deleteGroup (String groupId) {
+        databaseReference.child(groupId).removeValue();
 
-        //removing artist
-        groupReference.removeValue();
+        //getting the tracks reference for the specified artist
+        FirebaseDatabase.getInstance().getReference("Contact").child(groupId).removeValue();
 
-        /*DatabaseReference contactReference = FirebaseDatabase.getInstance().getReference("Contact").child(groupId);
-        contactReference.removeValue();
-*/
-        return true;
+
     }
 
-    public DatabaseReference getAllGroups() {
+    public DatabaseReference getAllGroups () {
         return databaseReference;
     }
 }
-

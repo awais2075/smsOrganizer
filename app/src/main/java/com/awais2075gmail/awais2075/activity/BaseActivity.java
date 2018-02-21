@@ -37,7 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Created by Muhammad Awais Rashi on 17-Dec-17.
+ * Created by Muhammad Awais Rashid on 17-Dec-17.
  */
 
 public abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -52,14 +52,15 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(setView());
-
+        gmailInit();
+        emailInit();
     }
 
 
     protected abstract int setView();
 
 
-    protected void gmailInit() {
+    private void gmailInit() {
         GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -77,7 +78,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
 
     }
 
-    protected void emailInit() {
+    private void emailInit() {
         mFirebaseAuth = FirebaseAuth.getInstance();
         //isEmailSignedIn();
     }
@@ -131,36 +132,6 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
         }
     }
 
-   /* protected boolean isGoogleSignedIn() {
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-        if (opr.isDone()) {
-            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-            // and the GoogleSignInResult will be available instantly.
-            GoogleSignInResult result = opr.get();
-            GoogleSignInAccount acct = result.getSignInAccount();
-//            Utils.setDefaults(this, "userId", acct.getId().toString());
-
-            Utils.userId = acct.getId().toString();
-            handleSignInResult(result);
-            Toast.makeText(this, Utils.userId+"", Toast.LENGTH_SHORT).show();
-            return true;
-        } else {
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
-//            showProgressDialog();
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    //                  hideProgressDialog();
-                    //Toast.makeText(BaseActivity.this, "OnStart else", Toast.LENGTH_SHORT).show();
-                    handleSignInResult(googleSignInResult);
-                }
-            });
-            return false;
-        }
-    }*/
-
     protected void isGoogleSignedIn() {
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if (opr.isDone()) {
@@ -185,25 +156,6 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
             });
         }
     }
-
-   /* private void handleSignInResult(GoogleSignInResult result) {
-        if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
-            //Toast.makeText(this, " if handle signInResult", Toast.LENGTH_SHORT).show();
-            Constants.gmailLoginCheck = true;
-            mIsGmailSignIn = true;
-            Toast.makeText(this, "Gmail Check : "+Constants.gmailLoginCheck, Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, ConversationActivity.class));
-        } else {
-            // Signed out, show unauthenticated UI.
-            //
-            //Toast.makeText(this, " else handle signInResult", Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, "Gmail Check : "+Constants.gmailLoginCheck, Toast.LENGTH_SHORT).show();
-
-
-        }
-    }*/
 
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
@@ -230,27 +182,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
         finish();
     }
 
-    /*@Override
-    protected void onStart() {
-        super.onStart();
-        isEmailSignedIn();
-        isGoogleSignedIn();
-    }*/
 
-    /*protected void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage("Loading....");
-            mProgressDialog.setIndeterminate(true);
-        }
-        mProgressDialog.show();
-    }
-
-    protected void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
-        }
-    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -261,28 +193,6 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
             handleSignInResult(result);
         }
     }
-
-
-    /*@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constants.RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
-        }
-    }*/
-
-    /*protected void gmailSignOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        Toast.makeText(BaseActivity.this, "SignOut", Toast.LENGTH_SHORT).show();
-                        Constants.gmailLoginCheck = false;
-                        finish();
-                    }
-                });
-    }*/
 
     protected void gmailSignOut() {
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(

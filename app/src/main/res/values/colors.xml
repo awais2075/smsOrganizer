@@ -8,7 +8,6 @@
     <!--<color name="colorPrimary">#6BB345</color>
     <color name="colorPrimaryDark">#0097a7</color>
     <color name="colorAccent">#999999</color>-->
-    <color name="colorTransparent">#00000000</color>
 
     <!--
         <color name="bg_login">#26ae90</color>
@@ -30,9 +29,7 @@
     <!--activity_login.xml-->
     <color name="button_googleSignIn">#dd4b39</color>
     <color name="button_facebookSignIn">#3b5998</color>
-    <color name="button_signIn">#6BB345</color>
     <color name="button_forgotPassword">#6BB345</color>
-    <color name="button_signUp">#6BB345</color>
 
     <!--activity_register.xml-->
     <color name="button_register">#6BB345</color>
@@ -47,10 +44,11 @@
     <color name="contact_number">#8c8c8c</color>
 
 
-    <color name="colorPrimaryText">#212121</color>
     <color name="grey">#DCDCDC</color>
 
-
+    <!--item_activity-->
+    <color name="text_heading">#333333</color>
+    <color name="text_subHeading">#8c8c8c</color>
 
 
 
