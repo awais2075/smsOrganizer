@@ -6,11 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-
-/**
- * Created by R Ankit on 30-12-2016.
- */
-
 public class DeliverReceiver extends BroadcastReceiver {
 
     @Override

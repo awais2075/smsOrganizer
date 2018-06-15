@@ -46,8 +46,10 @@
 
     <!--Action Settings-->
 
-    <string name="action_settings">Settings</string>
+    <string name="action_autoResponse">Set Auto Response</string>
     <string name="action_search">Search</string>
+    <string name="action_logout">LogOut</string>
+
 
     <!--activity_login.xml-->
     <string name="button_googleSignIn">CONNECT WITH GOOGLE</string>

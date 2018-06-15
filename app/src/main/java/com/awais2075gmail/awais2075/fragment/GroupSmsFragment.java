@@ -161,17 +161,18 @@ public class GroupSmsFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onClick(View v) {
                 if (hs.contains(text_groupName.getText().toString().toLowerCase())) {
-                    Toast.makeText(getContext(), "Already Exists", Toast.LENGTH_SHORT).show();
+
+                        Toast.makeText(getContext(), "Already Exists", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (groupDB.addGroup(Utils.userId, text_groupName.getText().toString())) {
+                    String groupId = databaseReference.push().getKey();
+                    Group group = new Group(groupId, text_groupName.getText().toString(), Utils.userId);
+                    if (groupDB.addGroup(group)) {
                         Toast.makeText(getContext(), "Group Added Successfully", Toast.LENGTH_SHORT).show();
                         alertDialog.dismiss();
                     } else {
                         Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
                     }
                 }
-
-
             }
         });
     }
@@ -183,10 +184,10 @@ public class GroupSmsFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void itemLongClicked(Group group, int position) {
-        contextMenu(group.getGroupId(), position);
+        contextMenu(group, position);
     }
 
-    private void contextMenu(final String groupId, final int position) {
+    private void contextMenu(final Group group, final int position) {
         String[] items = {"Delete", "Edit"};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext()
@@ -199,10 +200,11 @@ public class GroupSmsFragment extends BaseFragment implements View.OnClickListen
                         switch (i) {
                             case 0:
                                 dialogInterface.dismiss();
-                                deleteDialog(groupId, position);
+                                deleteDialog(group.getGroupId(), position);
                                 break;
                             case 1:
                                 Toast.makeText(getContext(), "Edit", Toast.LENGTH_SHORT).show();
+                                editGroup(group);
                                 dialogInterface.dismiss();
                                 break;
                         }
@@ -233,6 +235,12 @@ public class GroupSmsFragment extends BaseFragment implements View.OnClickListen
         });
         alert.create();
         alert.show();
+    }
+
+    private void editGroup(Group group) {
+        //showAlertDialogBox();
+        group.setGroupName("test");
+        databaseReference.child(group.getGroupId()).setValue(group);
     }
 
 

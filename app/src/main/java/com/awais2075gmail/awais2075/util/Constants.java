@@ -10,11 +10,13 @@ import android.provider.ContactsContract;
 import android.text.format.DateUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
- * Created by Muhammad Awais Rashi on 18-Dec-17.
+ * Created by Muhammad Awais Rashid on 18-Dec-17.
  */
 
 public class Constants {

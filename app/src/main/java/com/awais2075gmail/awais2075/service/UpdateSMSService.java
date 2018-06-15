@@ -5,10 +5,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 
-/**
- * Created by R Ankit on 29-12-2016.
- */
-
 public class UpdateSMSService extends IntentService {
 
     public UpdateSMSService() {

@@ -12,6 +12,8 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.net.Uri;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -21,11 +23,20 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
+
+import com.awais2075gmail.awais2075.permission.Permission;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075.adapter.MessageAdapter;
@@ -47,18 +58,24 @@ public class ConversationActivity extends BaseActivity {
     private TabLayout tabLayout_conversation;
     private ViewPager viewPager_conversation;
     private BroadcastReceiver broadcastReceiver;
+    private Permission permission;
+    private final String[] MULTIPLE_PERMISSIONS = {Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS};
+    private final int MULTIPLE_PERMISSION_REQUEST_CODE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (checkDefaultSettings()) {
-            checkPermissions();
+
+        permission = new Permission(this, MULTIPLE_PERMISSION_REQUEST_CODE, MULTIPLE_PERMISSIONS);
+        if (permission.checkPermissions()) {
+            checkDefaultSettings();
+            getPhoneContacts();
+            init();
+        } else {
+            permission.requestPermissions();
         }
-        getPhoneContacts();
-        init();
-
-
     }
+
 
     @Override
     protected int setView() {
@@ -122,59 +139,63 @@ public class ConversationActivity extends BaseActivity {
         }
     }
 
-    /*Runtime Permissions*/
-    private void checkPermissions() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            //Toast.makeText(this, "Lower Version Permission Granted", Toast.LENGTH_SHORT).show();
-            //getSupportLoaderManager().initLoader(Constants.ALL_SMS_LOADER, null, this);
-        } else if (requestPermissions()) {
-            //Toast.makeText(this, "Upper Version Permission Granted", Toast.LENGTH_SHORT).show();
-            //getSupportLoaderManager().initLoader(Constants.ALL_SMS_LOADER, null, this);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (permission.checkResults(requestCode, grantResults)) {
+            Toast.makeText(this, "All permissions granted", Toast.LENGTH_SHORT).show();
+            checkDefaultSettings();
+            getPhoneContacts();
+            init();
+        } else {
+            Toast.makeText(this, "Permissions Denied", Toast.LENGTH_SHORT).show();
+            showAlertDialog();
         }
-
     }
 
-    private boolean requestPermissions() {
-        int permissionReadContacts = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
-        int permissionReadSms = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
-        int permissionReceiveSms = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
-        int permissionSendSms = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS);
-        //int permissionWriteSms = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR);
+    private void showAlertDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
 
-        List<String> listPermissionsNeeded = new ArrayList<>();
-        if (permissionReadContacts != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.READ_CONTACTS);
-        }
-        if (permissionReadSms != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.READ_SMS);
-        }
-        if (permissionReceiveSms != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.RECEIVE_SMS);
-        }
-        if (permissionSendSms != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.SEND_SMS);
-        }
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), Constants.MULTIPLE_PERMISSIONS_REQUEST);
-            return false;
-        }
-        return true;
+        // Setting Dialog Title
+        alertDialog.setTitle("Application Permissions");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Do you want to go to the Settings for Permissions???");
+
+        // Setting Icon to Dialog
+
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                showAppSettings();
+            }
+        });
+
+        // Setting Negative "NO" Button
+        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Write your code here to invoke NO event
+                dialog.cancel();
+                finish();
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
+    }
+
+    private void showAppSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", getPackageName(), null));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case Constants.MULTIPLE_PERMISSIONS_REQUEST:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+    protected void onRestart() {
+        super.onRestart();
+        if (!permission.checkPermissions()) {
+            permission.requestPermissions();
 
-                    //Toast.makeText(this, "Permitted On Request Method", Toast.LENGTH_SHORT).show();
-                    //getSupportLoaderManager().initLoader(Constants.ALL_SMS_LOADER, null, this);
-                } else {
-                    //You did not accept the request can not use the functionality.
-                    Toast.makeText(this, "Not Permitted", Toast.LENGTH_SHORT).show();
-
-                }
-                break;
         }
     }
 
@@ -190,7 +211,7 @@ public class ConversationActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                checkPermissions();
+                                //checkPermissions();
                             }
                         })
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -199,7 +220,7 @@ public class ConversationActivity extends BaseActivity {
                                 Intent intent = new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
                                 intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, getPackageName());
                                 startActivity(intent);
-                                checkPermissions();
+                                //checkPermissions();
                             }
                         });
                 builder.show();
@@ -239,17 +260,6 @@ public class ConversationActivity extends BaseActivity {
         };
 
         this.registerReceiver(broadcastReceiver, intentFilter);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
     }
 
     private void getPhoneContacts() {

@@ -14,9 +14,7 @@ public class Contact{
     public Contact() {
     }
 
-    public Contact(String contactName) {
-        this.contactName = contactName;
-    }
+
 
     public Contact(String contactId, String contactName, String groupId) {
         this.contactId = contactId;

@@ -7,11 +7,6 @@ import android.content.Intent;
 import com.awais2075gmail.awais2075.util.Constants;
 import com.awais2075gmail.awais2075.util.Utils;
 
-
-/**
- * Created by R Ankit on 26-12-2016.
- */
-
 public class SaveSmsService extends IntentService {
 
     public SaveSmsService() {

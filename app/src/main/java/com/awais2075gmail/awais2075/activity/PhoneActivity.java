@@ -38,7 +38,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 public class PhoneActivity extends AppCompatActivity implements View.OnClickListener, ItemClickListener<Contact> {
 
     private PhoneAdapter phoneAdapter;
-    private List<Contact> phoneList = new ArrayList<>(Utils.phoneContactsList);
+    private List<Contact> phoneList = Utils.phoneContactsList;
     private SearchView searchView;
     private FancyButton button_selectAll;
     private FancyButton button_done;
@@ -47,7 +47,10 @@ public class PhoneActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone);
+
+
         setRecyclerView();
+
     }
 
 
@@ -71,7 +74,6 @@ public class PhoneActivity extends AppCompatActivity implements View.OnClickList
         ((RecyclerView) findViewById(R.id.recyclerView)).setAdapter(phoneAdapter);
 
     }
-
 
     @Override
     public void onClick(View v) {
@@ -159,5 +161,4 @@ public class PhoneActivity extends AppCompatActivity implements View.OnClickList
             getWindow().setStatusBarColor(Color.WHITE);
         }
     }
-
 }

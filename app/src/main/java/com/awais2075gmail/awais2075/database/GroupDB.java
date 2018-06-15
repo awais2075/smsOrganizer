@@ -16,9 +16,8 @@ public class GroupDB {
     }
 
 
-    public boolean addGroup(String userId, String groupName) {
-        String groupId = databaseReference.push().getKey();
-        databaseReference.child(groupId).setValue(new Group(groupId, groupName, userId));
+    public boolean addGroup(Group group) {
+        databaseReference.child(group.getGroupId()).setValue(group);
         return true;
     }
 

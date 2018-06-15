@@ -29,4 +29,8 @@ public class Group {
     public String getUserId() {
         return userId;
     }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 }

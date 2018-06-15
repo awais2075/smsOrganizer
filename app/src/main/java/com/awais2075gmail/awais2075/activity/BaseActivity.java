@@ -52,6 +52,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(setView());
+
         gmailInit();
         emailInit();
     }
@@ -182,8 +183,6 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
         finish();
     }
 
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -216,6 +215,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Toast.makeText(this, "Settings Action", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, AutoResponseActivity.class));
                 //Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
 
                 //showDialogBox();

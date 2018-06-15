@@ -257,17 +257,6 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         Toast.makeText(this, messageAdapter.getItemCount()+" "+messageList.size(), Toast.LENGTH_SHORT).show();
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
     public void sendSMSNow(Context context, String smsBody, String smsAddress) {
 
         BroadcastReceiver sendBroadcastReceiver = new SentReceiver();

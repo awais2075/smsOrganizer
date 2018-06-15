@@ -148,7 +148,6 @@ public class AllSmsFragment extends BaseFragment implements View.OnClickListener
 
                         smsType = Utils.getSmsType(cursor.getString(cursor.getColumnIndexOrThrow("type")));
 
-
                         sms = new SMS(smsId, smsThreadId, smsNumber, smsAddress, smsBody, smsReadState, smsDate, smsType, isSpam);
 
 

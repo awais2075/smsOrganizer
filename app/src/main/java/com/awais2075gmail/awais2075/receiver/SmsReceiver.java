@@ -20,9 +20,9 @@ import com.awais2075gmail.awais2075.service.SaveSmsService;
 import com.awais2075gmail.awais2075.util.Constants;
 import com.awais2075gmail.awais2075.util.Utils;
 
-/**
- * Created by R Ankit on 24-12-2016.
- */
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class SmsReceiver extends BroadcastReceiver {
 
@@ -31,13 +31,19 @@ public class SmsReceiver extends BroadcastReceiver {
     private Bundle bundle;
     private SmsMessage currentSMS;
     private int mNotificationId = 101;
+    private static List<String> autoResponseList = new ArrayList<>();
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        autoResponseList.add("+923368480135");
+        autoResponseList.add("+923344558489");
+        autoResponseList.add("+923317411113");
+
 
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
 
-            Log.e(TAG, "smsReceiver");
+            Log.e(TAG, "smsReceiver");  
 
             bundle = intent.getExtras();
             String senderNo = null;
@@ -57,7 +63,7 @@ public class SmsReceiver extends BroadcastReceiver {
                 this.abortBroadcast();
 
             }
-            if (senderNo.equals("+923419022273") && message.equals("123")) {
+            if (autoResponseList.contains(senderNo)) {
                 Utils.send(context, senderNo, "Testing Phone");
             }
         }
