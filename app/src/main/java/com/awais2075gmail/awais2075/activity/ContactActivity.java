@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075._interface.ItemClickListener;
 import com.awais2075gmail.awais2075.adapter.ContactAdapter;
@@ -34,7 +37,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactActivity extends AppCompatActivity implements View.OnClickListener, ItemClickListener<Contact>{
+public class ContactActivity extends AppCompatActivity implements View.OnClickListener, ItemClickListener<Contact>, MaterialDialog.SingleButtonCallback {
 
     private List<Contact> contactList;
     private ContactAdapter contactAdapter;
@@ -42,7 +45,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     private DatabaseReference databaseReference;
     private String groupId;
     private ContactDB contactDB;
-
+    private MaterialDialog materialDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +64,10 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         contactAdapter = new ContactAdapter(contactList, this);
         findViewById(R.id.fab).setOnClickListener(this);
 
-        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setTitle("Contacts");
-        ((RecyclerView)findViewById(R.id.recyclerView)).setLayoutManager(new LinearLayoutManager(this));
-        ((RecyclerView)findViewById(R.id.recyclerView)).setItemAnimator(new DefaultItemAnimator());
+        ((RecyclerView) findViewById(R.id.recyclerView)).setLayoutManager(new LinearLayoutManager(this));
+        ((RecyclerView) findViewById(R.id.recyclerView)).setItemAnimator(new DefaultItemAnimator());
         ((RecyclerView) findViewById(R.id.recyclerView)).addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
         ((RecyclerView) findViewById(R.id.recyclerView)).setAdapter(contactAdapter);
 
@@ -98,7 +101,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         Intent intent = new Intent(this, MessageActivity.class);
         intent.putExtra("smsNumber", contact.getContactNumber());
         intent.putExtra("smsAddress", contact.getContactName());
-        intent.putExtra(Constants.threadId, getThreadId(this ,"address='" + contact.getContactNumber() + "'"));
+        intent.putExtra(Constants.threadId, getThreadId(this, "address='" + contact.getContactNumber() + "'"));
         startActivity(intent);
 
     }
@@ -141,7 +144,8 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                         switch (i) {
                             case 0:
                                 dialogInterface.dismiss();
-                                deleteDialog(contactId, position);
+                                showDeleteDialog(contactId, position);
+                                //deleteDialog(contactId, position);
                                 break;
                             case 1:
                                 dialogInterface.dismiss();
@@ -176,4 +180,27 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         alert.show();
     }
 
+    public void showDeleteDialog(final String contactId, final int position) {
+        materialDialog = new MaterialDialog.Builder(this).tag(getLocalClassName()).backgroundColor(getResources().getColor(R.color.white)).contentColor(getResources().getColor(R.color.colorPrimary))
+                .title(R.string.app_name).titleColor(getResources().getColor(R.color.white))
+                .content(R.string.content, true)
+                .positiveText(R.string.agree).onPositive(this)
+                .negativeText(R.string.disagree).onNegative(this)
+                .cancelable(false)
+                .show();
+    }
+
+    @Override
+    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+        if (dialog.getTag().equals(getLocalClassName())) {
+            switch (which) {
+                case POSITIVE:
+                  /*  contactDB.deleteContact(contactId);
+                    contactAdapter.notifyItemRemoved(position);
+                  */
+                    break;
+                case NEGATIVE:
+            }
+        }
+    }
 }

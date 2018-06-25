@@ -43,7 +43,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         edit_confirmPassword = findViewById(R.id.edit_confirmPassword);
 
         findViewById(R.id.button_register).setOnClickListener(this);
-        findViewById(R.id.button_alreadyHaveAccount).setOnClickListener(this);
+        findViewById(R.id.textView_alreadyHaveAccount).setOnClickListener(this);
 
         /*Firebase Email Registration*/
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -55,7 +55,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             case R.id.button_register:
                 register();
                 break;
-            case R.id.button_alreadyHaveAccount:
+            case R.id.textView_alreadyHaveAccount:
                 finish();
                 break;
         }

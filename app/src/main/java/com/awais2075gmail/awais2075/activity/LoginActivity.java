@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075.util.Constants;
 import com.awais2075gmail.awais2075.util.Utils;
@@ -26,6 +27,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private EditText edit_userEmail;
     private EditText edit_userPassword;
+    private MaterialDialog materialDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,27 +38,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         init();
         isEmailSignedIn();
         isGoogleSignedIn();
-        Toast.makeText(this, Utils.userId+" is userId in Login Activity", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, Utils.userId + " is userId in Login Activity", Toast.LENGTH_SHORT).show();
 
     }
 
+
     @Override
     protected int setView() {
-        return R.layout.activity_login;
+        return R.layout.activity_login_;
     }
 
 
     private void init() {
-        edit_userEmail = findViewById(R.id.edit_userEmail);
-        edit_userPassword = findViewById(R.id.edit_userPassword);
+        edit_userEmail = findViewById(R.id.editText_email);
+        edit_userPassword = findViewById(R.id.editText_password);
 
         findViewById(R.id.button_googleSignIn).setOnClickListener(this);
         findViewById(R.id.button_facebookSignIn).setOnClickListener(this);
         findViewById(R.id.button_emailSignIn).setOnClickListener(this);
-        findViewById(R.id.button_forgotPassword).setOnClickListener(this);
-        findViewById(R.id.button_register).setOnClickListener(this);
+        findViewById(R.id.textView_forgotPassword).setOnClickListener(this);
+        findViewById(R.id.textView_register).setOnClickListener(this);
     }
-
 
 
     @Override
@@ -71,9 +73,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             case R.id.button_emailSignIn:
                 signIn();
                 break;
-            case R.id.button_forgotPassword:
+            case R.id.textView_forgotPassword:
                 break;
-            case R.id.button_register:
+            case R.id.textView_register:
                 startActivity(new Intent(this, RegisterActivity.class));
                 break;
         }

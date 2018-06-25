@@ -29,6 +29,8 @@ import android.view.MenuItem;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.awais2075gmail.awais2075.permission.Permission;
 
 import com.awais2075gmail.awais2075.R;
@@ -53,6 +55,7 @@ public class ConversationActivity extends BaseActivity {
     private Permission permission;
     private final String[] MULTIPLE_PERMISSIONS = {Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS};
     private final int MULTIPLE_PERMISSION_REQUEST_CODE = 101;
+    private boolean isDefaultApp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,7 @@ public class ConversationActivity extends BaseActivity {
 
         permission = new Permission(this, MULTIPLE_PERMISSION_REQUEST_CODE, MULTIPLE_PERMISSIONS);
         if (permission.checkPermissions()) {
-            checkDefaultSettings();
+            //checkDefaultAppSettings();
             getPhoneContacts();
             init();
         } else {
@@ -135,7 +138,8 @@ public class ConversationActivity extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (permission.checkResults(requestCode, grantResults)) {
             Toast.makeText(this, "All permissions granted", Toast.LENGTH_SHORT).show();
-            checkDefaultSettings();
+            //checkDefaultSettings();
+            //checkDefaultAppSettings();
             getPhoneContacts();
             init();
         } else {
@@ -188,6 +192,14 @@ public class ConversationActivity extends BaseActivity {
         if (!permission.checkPermissions()) {
             permission.requestPermissions();
 
+        }
+    }
+
+    private boolean checkDefaultAppSettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && !Telephony.Sms.getDefaultSmsPackage(this).equals(getPackageName())) {
+            return showDefaultSmsAppDialog();
+        } else {
+            return false;
         }
     }
 
@@ -270,4 +282,31 @@ public class ConversationActivity extends BaseActivity {
         }
         Utils.phoneContactsMap = hm;
     }
+
+    public boolean showDefaultSmsAppDialog() {
+        materialDialog = new MaterialDialog.Builder(this).tag(getLocalClassName()).backgroundColor(getResources().getColor(R.color.white)).contentColor(getResources().getColor(R.color.colorPrimary))
+                .title(R.string.app_name).titleColor(getResources().getColor(R.color.colorPrimary))
+                .content(R.string.content, true)
+                .positiveText(R.string.agree)
+                .positiveColor(getResources().getColor(R.color.colorPrimary)).onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        isDefaultApp = true;
+                        Intent intent = new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
+                        intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, getPackageName());
+                        startActivity(intent);
+                    }
+                })
+                .negativeText(R.string.disagree)
+                .negativeColor(getResources().getColor(R.color.colorPrimary)).onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        isDefaultApp = false;
+                    }
+                })
+                .cancelable(false)
+                .show();
+        return isDefaultApp;
+    }
+
 }

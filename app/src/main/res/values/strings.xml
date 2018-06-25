@@ -70,6 +70,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="title_activity_conversation">Conversations</string>
+    <string name="content">Are you sure to perform this action</string>
+    <string name="loading_content">Loading...</string>
+    <string name="agree">Yes</string>
+    <string name="disagree">No</string>
 
 
 </resources>

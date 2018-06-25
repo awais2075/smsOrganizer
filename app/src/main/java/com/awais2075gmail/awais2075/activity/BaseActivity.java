@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075.model.Contact;
 import com.awais2075gmail.awais2075.util.Constants;
@@ -46,6 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     private ProgressDialog mProgressDialog;
     private GoogleApiClient mGoogleApiClient;
     private boolean mIsEmailSignIn, mIsGmailSignIn = false;
+    protected MaterialDialog materialDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
 
         gmailInit();
         emailInit();
+        setUpMaterialDialog(false);
     }
 
 
@@ -72,8 +75,9 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     }
 
     protected void gmailSignIn() {
+        materialDialog.show();
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, Constants.RC_SIGN_IN );
+        startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
 
 
     }
@@ -84,34 +88,37 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     }
 
     protected void emailSignIn(String userEmail, String userPassword) {
-        Constants.showProgressDialog(this);
+        //Constants.showProgressDialog(this);
+        materialDialog.show();
         mFirebaseAuth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                Constants.hideProgressDialog();
+                materialDialog.hide();
                 if (task.isSuccessful()) {
                     Constants.emailLoginCheck = true;
-                    //Toast.makeText(BaseActivity.this, "Pass", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BaseActivity.this, "Pass", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(BaseActivity.this, ConversationActivity.class));
                 } else {
-                    //Toast.makeText(BaseActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BaseActivity.this, "Fail", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
     protected void emailRegistration(String userEmail, String userPassword) {
-        Constants.showProgressDialog(this);
+        materialDialog.show();
         mFirebaseAuth.createUserWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 Constants.hideProgressDialog();
                 if (task.isSuccessful()) {
+                    materialDialog.hide();
                     Toast.makeText(BaseActivity.this, "Registered", Toast.LENGTH_SHORT).show();
                     Constants.emailLoginCheck = true;
                     mIsEmailSignIn = true;
                     startActivity(new Intent(BaseActivity.this, ConversationActivity.class));
                 } else {
+                    materialDialog.hide();
                     //Toast.makeText(BaseActivity.this, "Not Registered", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -126,7 +133,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
             mIsEmailSignIn = true;
             Utils.userId = mFirebaseAuth.getCurrentUser().getUid().toString();
             //Toast.makeText(this, "Email Check : "+Constants.emailLoginCheck, Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, Utils.userId+" is Email Id", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, Utils.userId + " is Email Id", Toast.LENGTH_SHORT).show();
         } else {
             //Toast.makeText(this, "Email Check : "+Constants.emailLoginCheck, Toast.LENGTH_SHORT).show();
         }
@@ -164,7 +171,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
 
             Utils.userId = acct.getId();
             Constants.gmailLoginCheck = true;
-            Toast.makeText(this, Utils.userId+" is gmail Id", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, Utils.userId + " is gmail Id", Toast.LENGTH_SHORT).show();
             //Utils.userId = userId;
             //Toast.makeText(this, " if handle signInResult", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, ConversationActivity.class));
@@ -186,6 +193,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.RC_SIGN_IN) {
+            materialDialog.hide();
             Toast.makeText(this, "OnActivityResult", Toast.LENGTH_SHORT).show();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
@@ -205,7 +213,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main,menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -222,11 +230,24 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
             case R.id.action_logout:
                 if (Constants.gmailLoginCheck) {
                     gmailSignOut();
-                }else if (Constants.emailLoginCheck) {
+                } else if (Constants.emailLoginCheck) {
                     emailSignOut();
                 }
                 break;
         }
         return true;
     }
+
+    private void setUpMaterialDialog(boolean isHorizontal) {
+        materialDialog = new MaterialDialog.Builder(this)
+                .title(R.string.app_name)
+                .buttonRippleColor(getResources().getColor(R.color.colorPrimary))
+                .cancelable(false)
+                .content(R.string.loading_content)
+                .progress(true, 0)
+                .progressIndeterminateStyle(isHorizontal)
+                .build();
+
+    }
+
 }

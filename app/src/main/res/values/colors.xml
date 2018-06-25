@@ -39,7 +39,7 @@
     <color name="colorPrimary">#6BB345</color>
     <color name="colorPrimaryDark">#222</color>
     <!--#ea3732-->
-    <color name="colorAccent">#222222</color>
+    <color name="colorAccent">#6BB345</color>
     <color name="contact_name">#333333</color>
     <color name="contact_number">#8c8c8c</color>
 
@@ -49,7 +49,6 @@
     <!--item_activity-->
     <color name="text_heading">#333333</color>
     <color name="text_subHeading">#8c8c8c</color>
-
 
 
 </resources>

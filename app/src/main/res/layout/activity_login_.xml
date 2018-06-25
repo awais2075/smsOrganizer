@@ -65,7 +65,7 @@
             android:layout_marginRight="@dimen/_48sdp"
             android:drawableLeft="@mipmap/icon_lock"
             android:hint="Enter Password"
-            android:inputType="textVisiblePassword" />
+            android:inputType="textPassword" />
 
         <Button
             android:id="@+id/button_emailSignIn"
