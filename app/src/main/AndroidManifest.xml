@@ -97,6 +97,7 @@
         </activity>
         <activity android:name=".activity.ContactActivity" />
         <activity android:name=".activity.AutoResponseActivity"></activity>
+        <activity android:name=".activity.RegisterActivity" />
     </application>
 
 </manifest>

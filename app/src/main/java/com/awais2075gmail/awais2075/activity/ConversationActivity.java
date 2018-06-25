@@ -30,13 +30,6 @@ import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
 import com.awais2075gmail.awais2075.permission.Permission;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.DexterError;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.PermissionRequestErrorListener;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075.adapter.MessageAdapter;
@@ -44,7 +37,6 @@ import com.awais2075gmail.awais2075.fragment.AllSmsFragment;
 import com.awais2075gmail.awais2075.fragment.GroupSmsFragment;
 import com.awais2075gmail.awais2075.fragment.UnknownSmsFragment;
 import com.awais2075gmail.awais2075.model.Contact;
-import com.awais2075gmail.awais2075.util.Constants;
 import com.awais2075gmail.awais2075.util.Utils;
 import com.google.android.gms.common.ConnectionResult;
 
