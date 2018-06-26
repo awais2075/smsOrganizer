@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 
 import com.awais2075gmail.awais2075.model.Contact;
+import com.awais2075gmail.awais2075.util.FastSave;
 import com.awais2075gmail.awais2075.util.Utils;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.leakcanary.LeakCanary;
@@ -22,6 +23,7 @@ public class MApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        FastSave.init(this);
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
@@ -49,7 +51,6 @@ public class MApplication extends Application {
         //Utils.phoneContactsList = phoneList;
         Utils.phoneContactsMap = hm;
     }*/
-
 
 
 }

@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075._interface.ItemClickListener;
 import com.awais2075gmail.awais2075.activity.ContactActivity;
@@ -53,7 +57,7 @@ public class GroupSmsFragment extends BaseFragment implements View.OnClickListen
     private HashSet<String> hs;
     private DatabaseReference databaseReference;
     private FirebaseDatabase firebaseDatabase;
-
+    private String groupName;
 
 
     public GroupSmsFragment() {
@@ -114,7 +118,7 @@ public class GroupSmsFragment extends BaseFragment implements View.OnClickListen
             public void onDataChange(DataSnapshot dataSnapshot) {
                 groupList.clear();
                 hs = new HashSet<>();
-                Toast.makeText(getContext(), dataSnapshot.child("Contact").getChildrenCount()+" contacts", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), dataSnapshot.child("Contact").getChildrenCount() + " contacts", Toast.LENGTH_SHORT).show();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     /*if (snapshot.getValue(Group.class).getUserId().contains(Utils.userId)) {
@@ -140,7 +144,8 @@ public class GroupSmsFragment extends BaseFragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fab:
-                showAlertDialogBox();
+                createCategoryDialog();
+                //showAlertDialogBox();
                 break;
         }
     }
@@ -162,7 +167,7 @@ public class GroupSmsFragment extends BaseFragment implements View.OnClickListen
             public void onClick(View v) {
                 if (hs.contains(text_groupName.getText().toString().toLowerCase())) {
 
-                        Toast.makeText(getContext(), "Already Exists", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Already Exists", Toast.LENGTH_SHORT).show();
                 } else {
                     String groupId = databaseReference.push().getKey();
                     Group group = new Group(groupId, text_groupName.getText().toString(), Utils.userId);
@@ -175,6 +180,41 @@ public class GroupSmsFragment extends BaseFragment implements View.OnClickListen
                 }
             }
         });
+    }
+
+    public void createCategoryDialog() {
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.app_name)
+                .content(R.string.content_create_group)
+                .inputType(
+                        InputType.TYPE_CLASS_TEXT
+                                | InputType.TYPE_TEXT_VARIATION_PERSON_NAME
+                                | InputType.TYPE_TEXT_FLAG_CAP_WORDS)
+                .positiveText(R.string.submit).onPositive((dialog, which) -> {
+            String groupId = databaseReference.push().getKey();
+            Group group = new Group(groupId, groupName, Utils.userId);
+            if (groupDB.addGroup(group)) {
+                Toast.makeText(getContext(), "Group Added Successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
+            }
+        })
+                .alwaysCallInputCallback() // this forces the callback to be invoked with every input change
+                .input(
+                        R.string.input_hint,
+                        0,
+                        false,
+                        (dialog, input) -> {
+                            if (hs.contains(input.toString().toLowerCase())) {
+                                dialog.setContent("Particular Category already exists");
+                                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+                            } else {
+                                dialog.setContent(R.string.content_create_group);
+                                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
+                                groupName = input.toString();
+                            }
+                        })
+                .show();
     }
 
     @Override

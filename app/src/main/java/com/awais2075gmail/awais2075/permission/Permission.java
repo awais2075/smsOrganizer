@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-import com.awais2075gmail.awais2075.Manifest;
 
 public class Permission {
     private Context context;

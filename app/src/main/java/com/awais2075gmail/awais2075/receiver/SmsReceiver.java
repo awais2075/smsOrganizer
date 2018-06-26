@@ -16,8 +16,10 @@ import android.util.Log;
 
 import com.awais2075gmail.awais2075.R;
 import com.awais2075gmail.awais2075.activity.ConversationActivity;
+import com.awais2075gmail.awais2075.model.SilentKiller;
 import com.awais2075gmail.awais2075.service.SaveSmsService;
 import com.awais2075gmail.awais2075.util.Constants;
+import com.awais2075gmail.awais2075.util.FastSave;
 import com.awais2075gmail.awais2075.util.Utils;
 
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
 
-            Log.e(TAG, "smsReceiver");  
+            Log.e(TAG, "smsReceiver");
 
             bundle = intent.getExtras();
             String senderNo = null;
@@ -127,8 +129,11 @@ public class SmsReceiver extends BroadcastReceiver {
     private void changeMode(Context context, String text) {
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-        if ((audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) && (text.equals("123"))) {
-            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        if ((audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) && (FastSave.getInstance().isKeyExists("silentKiller"))) {
+            SilentKiller silentKiller = FastSave.getInstance().getObject("silentKiller", SilentKiller.class);
+            if (text.equals(silentKiller.getEvacuationCode()) && silentKiller.getIsEnabled()) {
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+            }
         }
     }
 }

@@ -47,6 +47,7 @@
     <!--Action Settings-->
 
     <string name="action_autoResponse">Set Auto Response</string>
+    <string name="action_silent">Turn on Silent Killer</string>
     <string name="action_search">Search</string>
     <string name="action_logout">LogOut</string>
 
@@ -74,6 +75,15 @@
     <string name="loading_content">Loading...</string>
     <string name="agree">Yes</string>
     <string name="disagree">No</string>
+    <string name="silent_killer_content">Enter the evacuation code</string>
+    <string name="submit">SUBMIT</string>
+    <string name="silent_promt">Turn on Silent Killer???</string>
+    <string name="empty_string" />
+    <string name="evacuation_code_string">%1$s</string>
+    <string name="showPassword">Show Password</string>
+    <string name="content_create_group">Enter the Category Name</string>
+    <string name="input_hint">Friends</string>
+    <string name="input_content_custominvalidation">Group already exists</string>
 
 
 </resources>
