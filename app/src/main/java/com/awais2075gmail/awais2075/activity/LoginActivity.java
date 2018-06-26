@@ -32,6 +32,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(setView());
         //setContentView(R.layout.activity_login);
 
         //checkPermissions();

@@ -1,5 +1,6 @@
 package com.awais2075gmail.awais2075.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -17,7 +18,7 @@ import com.awais2075gmail.awais2075.model.AutoResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AutoResponseActivity extends AppCompatActivity implements View.OnClickListener, ItemClickListener<AutoResponse>{
+public class AutoResponseActivity extends AppCompatActivity implements View.OnClickListener, ItemClickListener<AutoResponse> {
 
     private List<AutoResponse> autoResponseList = new ArrayList<>();
     private AutoResponseAdapter autoResponseAdapter;
@@ -25,16 +26,17 @@ public class AutoResponseActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auto_response);
+          setContentView(R.layout.activity_auto_response);
 
         setRecyclerView();
     }
 
+
     private void setRecyclerView() {
-        autoResponseList.add(new AutoResponse("Muhammad Awais","+92 341 9022273","Hello i will call u later"));
-        autoResponseList.add(new AutoResponse("Muhammad Ubaid","+92 341 9022273","Hello i am busy"));
-        autoResponseList.add(new AutoResponse("Muhammad Anas","+92 341 9022273","Hello in a meeting"));
-        autoResponseList.add(new AutoResponse("Muhammad Rashid","+92 341 9022273","Hello call me later"));
+        autoResponseList.add(new AutoResponse("Muhammad Awais", "+92 341 9022273", "Hello i will call u later"));
+        autoResponseList.add(new AutoResponse("Muhammad Ubaid", "+92 341 9022273", "Hello i am busy"));
+        autoResponseList.add(new AutoResponse("Muhammad Anas", "+92 341 9022273", "Hello in a meeting"));
+        autoResponseList.add(new AutoResponse("Muhammad Rashid", "+92 341 9022273", "Hello call me later"));
 
         autoResponseAdapter = new AutoResponseAdapter(this, autoResponseList);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
@@ -63,4 +65,5 @@ public class AutoResponseActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
 
     }
+
 }

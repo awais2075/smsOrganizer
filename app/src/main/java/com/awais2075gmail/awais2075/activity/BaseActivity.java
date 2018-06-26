@@ -1,8 +1,6 @@
 package com.awais2075gmail.awais2075.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,8 +10,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -25,6 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.internal.MDTintHelper;
 import com.afollestad.materialdialogs.internal.ThemeSingleton;
 import com.awais2075gmail.awais2075.R;
+import com.awais2075gmail.awais2075._interface.AutoResponseCallback;
 import com.awais2075gmail.awais2075.model.SilentKiller;
 import com.awais2075gmail.awais2075.util.Constants;
 import com.awais2075gmail.awais2075.util.FastSave;
@@ -37,12 +34,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-
 
 
 /**
@@ -55,7 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     private GoogleApiClient mGoogleApiClient;
     private boolean mIsEmailSignIn, mIsGmailSignIn = false;
     protected MaterialDialog materialDialog;
-
+    private AutoResponseCallback xcallback;
 
     private String evacuationCode = "";
     private boolean isEnabled = true;
@@ -67,7 +62,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(setView());
+        //setContentView(setView());
 
         gmailInit();
         emailInit();
@@ -217,45 +212,12 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
 
     protected void gmailSignOut() {
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        Toast.makeText(BaseActivity.this, "SignOut", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
+                status -> {
+                    Toast.makeText(BaseActivity.this, "SignOut", Toast.LENGTH_SHORT).show();
+                    finish();
                 });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_silent:
-                showCustomView();
-                //showSilentKillerDialog();
-                break;
-            case R.id.action_settings:
-                Toast.makeText(this, "Settings Action", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, AutoResponseActivity.class));
-                //Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
-
-                //showDialogBox();
-                break;
-            case R.id.action_logout:
-                if (Constants.gmailLoginCheck) {
-                    gmailSignOut();
-                } else if (Constants.emailLoginCheck) {
-                    emailSignOut();
-                }
-                break;
-        }
-        return true;
-    }
 
     private void setUpMaterialDialog(boolean isHorizontal) {
         materialDialog = new MaterialDialog.Builder(this)
@@ -396,4 +358,5 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
 }

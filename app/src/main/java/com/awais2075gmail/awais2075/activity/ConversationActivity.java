@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,11 +16,9 @@ import android.net.Uri;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -39,6 +36,7 @@ import com.awais2075gmail.awais2075.fragment.AllSmsFragment;
 import com.awais2075gmail.awais2075.fragment.GroupSmsFragment;
 import com.awais2075gmail.awais2075.fragment.UnknownSmsFragment;
 import com.awais2075gmail.awais2075.model.Contact;
+import com.awais2075gmail.awais2075.util.Constants;
 import com.awais2075gmail.awais2075.util.Utils;
 import com.google.android.gms.common.ConnectionResult;
 
@@ -60,7 +58,7 @@ public class ConversationActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(setView());
         permission = new Permission(this, MULTIPLE_PERMISSION_REQUEST_CODE, MULTIPLE_PERMISSIONS);
         if (permission.checkPermissions()) {
             //checkDefaultAppSettings();
@@ -103,6 +101,11 @@ public class ConversationActivity extends BaseActivity {
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    /*@Override
+    public void startActivity() {
+        startActivity(new Intent(this, AutoResponseActivity.class));
+    }*/
 
 
     private class ViewPagerAdapter extends FragmentStatePagerAdapter {
@@ -307,6 +310,38 @@ public class ConversationActivity extends BaseActivity {
                 .cancelable(false)
                 .show();
         return isDefaultApp;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_silent:
+                showCustomView();
+                //showSilentKillerDialog();
+                break;
+            case R.id.action_auto_response:
+                Toast.makeText(this, "Settings Action", Toast.LENGTH_SHORT).show();
+
+                startActivity(new Intent(ConversationActivity.this, AutoResponseActivity.class));
+                //callback.startActivity();
+
+                //showDialogBox();
+                break;
+            case R.id.action_logout:
+                if (Constants.gmailLoginCheck) {
+                    gmailSignOut();
+                } else if (Constants.emailLoginCheck) {
+                    emailSignOut();
+                }
+                break;
+        }
+        return true;
     }
 
 }
