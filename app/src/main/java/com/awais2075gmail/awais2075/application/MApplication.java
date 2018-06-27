@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Muhammad Awais Rashi on 18-Jan-18.
+ * Created by Muhammad Awais Rashid on 18-Jan-18.
  */
 
 public class MApplication extends Application {

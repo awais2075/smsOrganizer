@@ -26,7 +26,7 @@ public class AutoResponseActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-          setContentView(R.layout.activity_auto_response);
+        setContentView(R.layout.activity_auto_response);
 
         setRecyclerView();
     }

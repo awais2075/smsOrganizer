@@ -62,7 +62,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(setView());
+        setContentView(setView());
 
         gmailInit();
         emailInit();

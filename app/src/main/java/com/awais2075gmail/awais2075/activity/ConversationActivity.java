@@ -58,7 +58,7 @@ public class ConversationActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(setView());
+        //setContentView(setView());
         permission = new Permission(this, MULTIPLE_PERMISSION_REQUEST_CODE, MULTIPLE_PERMISSIONS);
         if (permission.checkPermissions()) {
             //checkDefaultAppSettings();
